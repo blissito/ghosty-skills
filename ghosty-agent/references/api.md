@@ -54,5 +54,5 @@ Names: `a-z 0-9 - _`, max 20 servers. The agent restarts automatically.
 
 ## Errors
 `400` invalid body (message in `error`) · `404` unknown id/token · `405` wrong method ·
-`409 agente_no_acp` the engine has no machine API (use Ghosty · Lite or Goose) ·
+`409 agente_sin_maquina` files, skills, MCP and restart need an engine with its own machine (Ghosty · Lite or Goose); `GET`/`PATCH` work on every engine ·
 `413` too big · `502` saved but the machine did not take it (retry `POST /restart`).

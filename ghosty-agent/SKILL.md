@@ -46,6 +46,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **MCP `PUT` replaces the whole list.** `GET …/mcp` first and send back the existing servers plus
   the new one. Only `https://` URLs for HTTP servers; stdio servers need the binary to exist in the
   agent's machine (Node and Python are there).
+- **Engines without their own machine** (Claude, DeepSeek, Codex) accept `GET`/`PATCH` (identity, model) only; files, skills, MCP and restart answer `409 agente_sin_maquina`. Tell the user and stop; do not retry.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
