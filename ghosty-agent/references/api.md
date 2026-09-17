@@ -5,9 +5,10 @@ Base: `https://www.ghosty.studio/api/v2/agents/{id}` · Auth: `Authorization: Be
 Full spec: https://www.ghosty.studio/openapi.yaml · Docs: https://www.ghosty.studio/docs/configurar
 
 ## GET /
-Returns `{ id, name, engine, model, models: [{id,label}], prompt, channels, webSearch, mcp }`.
+Returns `{ id, name, engine, hasMachine, model, models: [{id,label}], prompt, channels, webSearch, mcp }`.
+`hasMachine` (bool) says whether files/skills/MCP/restart exist for this engine.
 Add `?full=1` to also get `files: [{path,size}]` and `skills: [{slug,description,files}]`
-(wakes the machine if asleep).
+(wakes the machine if asleep). Add `?fields=prompt,model` to get only those keys (`id` always).
 
 ```bash
 curl -s "$B" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN"
@@ -15,7 +16,9 @@ curl -s "$B" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN"
 
 ## PATCH /
 Body: any of `{ "name", "model", "prompt", "webSearch": bool, "channels": { "teams": bool } }`.
-Response: the same as GET plus `aplicado: ["set-prompt", …]`. `model` restarts the agent.
+Response: the same as GET plus `aplicado: ["set-prompt", …]` and, after a `prompt` change, `nota`
+telling whether a `restart` applies (machine) or the identity simply enters on the next
+conversation (no machine). `model` restarts the agent.
 
 ```bash
 curl -s -X PATCH "$B" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" \
@@ -50,7 +53,20 @@ Body: `{ "servers": [ …full list… ] }`. Each server is one of:
 Names: `a-z 0-9 - _`, max 20 servers. The agent restarts automatically.
 
 ## POST /restart
-→ `{ reiniciado: true }`. Cuts a running turn; disk survives.
+→ `{ reiniciado: true }`. Cuts a running turn; disk survives. Only with `hasMachine: true`;
+otherwise `409 agente_sin_maquina`.
+
+## POST /try
+Body: `{ "text": "…", "session"?: "a-z0-9_-", "reset"?: bool }`. One full turn to text, no stream,
+up to 180 s. `session` (default `default`) keeps separate memories; `reset: true` forgets that
+session first (with no `text` it only forgets). One turn at a time per session (`409 turno_en_curso`).
+Works on every engine; consumes balance like any turn.
+
+```bash
+curl -s -X POST "$B/try" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" \
+  -H "Content-Type: application/json" -d '{"text":"¿Quién eres?","reset":true}'
+```
+→ `{ "text": "Soy Ghosty…", "error": null, "session": "default" }` · `502` if the turn failed with no text.
 
 ## Errors
 `400` invalid body (message in `error`) · `404` unknown id/token · `405` wrong method ·
