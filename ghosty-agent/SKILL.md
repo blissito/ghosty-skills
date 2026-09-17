@@ -1,6 +1,11 @@
 ---
 name: ghosty-agent
 description: Configure a Ghosty Studio agent (identity/system prompt, model, knowledge files in its machine, skills, custom MCP servers) through its REST API using the agent token. Use when the user asks to set up, tune, teach, or connect their Ghosty agent, or mentions ghosty.studio.
+license: MIT
+compatibility: Needs curl or any HTTP client and network access to https://www.ghosty.studio
+metadata:
+  author: ghosty-studio
+  version: "1.1"
 ---
 
 # Configure a Ghosty Studio agent
