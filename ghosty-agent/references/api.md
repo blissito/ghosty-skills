@@ -5,9 +5,9 @@ Base: `https://www.ghosty.studio/api/v2/agents/{id}` · Auth: `Authorization: Be
 Full spec: https://www.ghosty.studio/openapi.yaml · Docs: https://www.ghosty.studio/docs/configurar
 
 ## GET /
-Returns `{ id, name, engine, hasMachine, model, models: [{id,label}], prompt, channels, webSearch, mcp }`.
+Returns `{ id, name, engine, hasMachine, model, models: [{id,label}], prompt, channels, webSearch, mcp, tools: { gs: {name: bool}, extensions: {name: bool} } }`.
 `hasMachine` (bool) says whether files/skills/MCP/restart exist for this engine.
-Add `?full=1` to also get `files: [{path,size}]` and `skills: [{slug,description,files}]`
+Add `?full=1` to also get `files: [{path,size}]`, `skills: [{slug,description,files}]` and `extensions: [{name,enabled}]`
 (wakes the machine if asleep). Add `?fields=prompt,model` to get only those keys (`id` always).
 
 ```bash
@@ -15,7 +15,8 @@ curl -s "$B" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN"
 ```
 
 ## PATCH /
-Body: any of `{ "name", "model", "prompt", "webSearch": bool, "channels": { "teams": bool } }`.
+Body: any of `{ "name", "model", "prompt", "webSearch": bool, "channels": { "teams": bool, "web": bool, "whatsapp": bool }, "tools": { "gs": { "<name>": bool }, "extensions": { "<name>": bool } } }`.
+`tools` turns tools off (`false`) or back on (`true`) by name and merges with what is saved. `tools.gs` are the tools gs lends the agent (the GET lists them all with their state); `tools.extensions` are the machine's `config.yaml` extensions (`developer` = shell + files, `todo`, `analyze`, `easybits`…; `?full=1` returns the real list as `extensions`) and changing them restarts the machine. The veto is enforced: an off tool disappears from the list and is refused when called.
 Response: the same as GET plus `aplicado: ["set-prompt", …]` and, after a `prompt` change, `nota`
 telling whether a `restart` applies (machine) or the identity simply enters on the next
 conversation (no machine). `model` restarts the agent.
