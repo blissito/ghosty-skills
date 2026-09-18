@@ -53,6 +53,16 @@ Body: `{ "servers": [ …full list… ] }`. Each server is one of:
 
 Names: `a-z 0-9 - _`, max 20 servers. The agent restarts automatically.
 
+## GET /whatsapp  ·  PUT /whatsapp
+Which WhatsApp numbers this agent answers. Numbers belong to the workspace and are paired from Sales
+(`salesUrl`); here you only choose who answers. `PUT {"numbers": ["<id>", …]}` leaves the agent
+answering exactly those (one number → one agent; unchecking mutes it, the pairing stays).
+
+```bash
+curl -s "$B/whatsapp" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN"
+```
+→ `{ numbers: [{id, label, mine, takenByOther}], hasSales, salesUrl }`
+
 ## POST /restart
 → `{ reiniciado: true }`. Cuts a running turn; disk survives. Only with `hasMachine: true`;
 otherwise `409 agente_sin_maquina`.
