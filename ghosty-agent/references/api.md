@@ -65,6 +65,16 @@ curl -s "$B/whatsapp" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN"
 ```
 → `{ numbers: [{id, label, mine, takenByOther}], hasSales, salesUrl }`
 
+## GET /bundle  ·  POST /bundle
+The whole agent as an Eve-style directory (`instructions.md`, `skills/<slug>/SKILL.md`, `knowledge/…`, `mcp.json`),
+as JSON: `{ "layout": "eve", "files": [{ "path", "contentBase64" }] }`. `POST` takes the same shape and imports
+it: `instructions.md` → prompt, `skills/x.md` or `skills/x/SKILL.md` → skills (a frontmatter is added when missing),
+`knowledge/…` → files. Eve's `tools/`, `channels/`, `schedules/` are not executed and come back in `ignorado`.
+
+```bash
+curl -s "$B/bundle" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" > agent.json
+```
+
 ## POST /restart
 → `{ reiniciado: true }`. Cuts a running turn; disk survives. Only with `hasMachine: true`;
 otherwise `409 agente_sin_maquina`.
@@ -83,5 +93,5 @@ curl -s -X POST "$B/try" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" \
 
 ## Errors
 `400` invalid body (message in `error`) · `404` unknown id/token · `405` wrong method ·
-`409 agente_sin_maquina` files, skills and restart need an engine with its own machine (Ghosty · Lite or Goose); `GET`/`PATCH` and MCP work on every engine (in the pool the servers travel in the worker env and the boxes recycle) ·
+`409 agente_sin_maquina` only `POST /restart` needs an engine with its own machine (Ghosty · Lite or Goose). Files, skills, MCP, `GET`/`PATCH` work on every engine: the agent's **bundle** (`instructions.md`, `skills/`, `knowledge/`) lives in Studio (`storage: "bundle"`) and is seeded into the worker's cwd on each turn when it changed; on machines (`storage: "box"`) it is also written to `/data/agent` and `/data/work` ·
 `413` too big · `502` saved but the machine did not take it (retry `POST /restart`).
