@@ -83,5 +83,5 @@ curl -s -X POST "$B/try" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" \
 
 ## Errors
 `400` invalid body (message in `error`) · `404` unknown id/token · `405` wrong method ·
-`409 agente_sin_maquina` files, skills, MCP and restart need an engine with its own machine (Ghosty · Lite or Goose); `GET`/`PATCH` work on every engine ·
+`409 agente_sin_maquina` files, skills and restart need an engine with its own machine (Ghosty · Lite or Goose); `GET`/`PATCH` and MCP work on every engine (in the pool the servers travel in the worker env and the boxes recycle) ·
 `413` too big · `502` saved but the machine did not take it (retry `POST /restart`).
