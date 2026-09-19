@@ -5,7 +5,7 @@ Base: `https://www.ghosty.studio/api/v2/agents/{id}` · Auth: `Authorization: Be
 Full spec: https://www.ghosty.studio/openapi.yaml · Docs: https://www.ghosty.studio/docs/configurar
 
 ## GET /
-Returns `{ id, name, engine, hasMachine, model, models: [{id,label}], prompt, channels, webSearch, mcp, messengerPage, starters, tools: { gs: {name: bool}, extensions: {name: bool} } }`.
+Returns `{ id, name, engine, hasMachine, model, models: [{id,label}], prompt, channels, webSearch, mcp, messengerPages: [{pageId,pageName}], starters, tools: { gs: {name: bool}, extensions: {name: bool} } }`.
 `hasMachine` (bool) says whether files/skills/MCP/restart exist for this engine.
 Add `?full=1` to also get `files: [{path,size}]`, `skills: [{slug,description,files}]` and `extensions: [{name,enabled}]`
 (wakes the machine if asleep). Add `?fields=prompt,model` to get only those keys (`id` always).
