@@ -17,6 +17,7 @@ curl -s "$B" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN"
 ## PATCH /
 Body: any of `{ "name", "model", "prompt", "webSearch": bool, "channels": { "teams": bool, "web": bool, "whatsapp": bool, "messenger": bool }, "starters": ["…up to 5, ≤80 chars"], "tools": { "gs": { "<name>": bool }, "extensions": { "<name>": bool } } }`.
 `tools.gs` today: `programar_seguimiento` (schedule a future turn) and `actualizar_identidad` (the agent rewrites or appends to its own prompt — it only works when the owner talks to it from Studio or the Mac app; from Messenger/WhatsApp/Teams the call is refused).
+`tools.canales` decides per channel: `{ "canales": { "messenger": { "actualizar_identidad": false } } }` (channels: `chat` = Studio/Mac app, `teams`, `whatsapp`, `messenger`, `programado`, `prueba`; the GET returns the effective matrix). By default `actualizar_identidad` is only on in `chat`.
 `tools` turns tools off (`false`) or back on (`true`) by name and merges with what is saved. `tools.gs` are the tools gs lends the agent (the GET lists them all with their state); `tools.extensions` are the machine's `config.yaml` extensions (`developer` = shell + files, `todo`, `analyze`, `easybits`…; `?full=1` returns the real list as `extensions`) and changing them restarts the machine. The veto is enforced: an off tool disappears from the list and is refused when called.
 Response: the same as GET plus `aplicado: ["set-prompt", …]` and, after a `prompt` change, `nota`
 telling whether a `restart` applies (machine) or the identity simply enters on the next
