@@ -41,6 +41,9 @@ curl -s -X PUT "$B/files/precios-2026.pdf" -H "Authorization: Bearer $GHOSTY_AGE
 ## PUT /skills/{slug}  ·  DELETE /skills/{slug}  ·  GET /skills
 Body: `{ "markdown": "<SKILL.md content>", "assets": [{ "name": "scripts/x.py", "contentBase64": "…" }] }`.
 Max 25 MB total. Then `POST /restart` so the agent loads it.
+`GET /skills` also returns `community: [{slug, description, repo, url, license, installed}]` — a curated
+catalog of open-source skills (grill-me, caveman, ponytail, karpathy-guidelines, frontend-design,
+test-driven-development…). Install one with `PUT /skills/{slug}` and body `{ "fromCatalog": true }` (no markdown needed).
 
 ```bash
 jq -n --rawfile md SKILL.md '{markdown:$md}' | \
