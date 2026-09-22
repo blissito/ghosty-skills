@@ -28,6 +28,11 @@ export GHOSTY_AGENT_TOKEN="gat_…"
 Base URL: `https://www.ghosty.studio/api/v2/agents/$GHOSTY_AGENT_ID`. Every call:
 `-H "Authorization: Bearer $GHOSTY_AGENT_TOKEN"`. Wrong token or id → `404` (do not retry).
 
+**Agent hosted on EasyBits** (`ghosty-lite` / `goose` template)? Same contract for `/prompt`,
+`/files`, `/skills/{slug}`, `/mcp`, `/restart`: base `https://www.easybits.cloud/api/v2/agents/$AGENT_ID`
+with `Authorization: Bearer $EASYBITS_API_KEY` (the owner's key, not an agent token). Identity
+there is `PATCH /` with `{ systemPrompt, systemPromptMode }` (`replace` = only your prompt).
+
 ## Know the engine first
 
 `GET …?fields=name,engine,model,hasMachine,prompt` before anything else. `hasMachine` decides
