@@ -2,7 +2,7 @@
 name: ghosty-agent
 description: Configure, test and chat with a Ghosty Studio agent (identity/system prompt, model, knowledge files in its machine, skills, custom MCP servers) with the `ghosty` CLI, or its REST API as a fallback. Use when the user asks to set up, tune, teach, test or connect their Ghosty agent, or mentions ghosty.studio.
 license: MIT
-compatibility: Needs Node 22+ (for npx @ghosty.studio/cli) or curl, and network access to https://www.ghosty.studio
+compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
   version: "1.3"
@@ -15,13 +15,13 @@ over HTTPS with **its own token**; nothing runs on the user's computer.
 
 ## Setup (once): use the CLI
 
-Run it with `npx -y @ghosty.studio/cli <command>` (or `ghosty <command>` if installed globally).
+Run it with `npx -y @ghostystudio/cli <command>` (or `ghosty <command>` if installed globally).
 Always pass `--json` and read stdout as JSON; notices go to stderr.
 
 **Sign in (the user just opens a link):**
 
 ```bash
-npx -y @ghosty.studio/cli login --json
+npx -y @ghostystudio/cli login --json
 # first line: {"event":"login_url","url":"…"}  → show this link to the user and ask them to open it
 # then:       {"event":"logged_in","email":"…"} → done; the session is saved and renews itself
 ```
@@ -110,8 +110,8 @@ exactly what changed, read the answer and tell the user whether it matches:
 | model | `¿Qué modelo eres?` → the label from `models` |
 
 ```bash
-npx -y @ghosty.studio/cli try <id> --reset --json
-npx -y @ghosty.studio/cli try <id> "¿Quién eres y qué haces?" --json
+npx -y @ghostystudio/cli try <id> --reset --json
+npx -y @ghostystudio/cli try <id> "¿Quién eres y qué haces?" --json
 ```
 
 `--reset` starts from a clean memory; use `--session <name>` to keep several test threads apart. A
