@@ -1,11 +1,11 @@
 ---
 name: ghosty-agent
-description: Configure a Ghosty Studio agent (identity/system prompt, model, knowledge files in its machine, skills, custom MCP servers) through its REST API using the agent token. Use when the user asks to set up, tune, teach, or connect their Ghosty agent, or mentions ghosty.studio.
+description: Configure, test and chat with a Ghosty Studio agent (identity/system prompt, model, knowledge files in its machine, skills, custom MCP servers) with the `ghosty` CLI, or its REST API as a fallback. Use when the user asks to set up, tune, teach, test or connect their Ghosty agent, or mentions ghosty.studio.
 license: MIT
-compatibility: Needs curl or any HTTP client and network access to https://www.ghosty.studio
+compatibility: Needs Node 22+ (for npx @ghosty.studio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Configure a Ghosty Studio agent
@@ -13,20 +13,38 @@ metadata:
 A Ghosty Studio agent runs on its own isolated machine (disk, terminal, memory). You configure it
 over HTTPS with **its own token**; nothing runs on the user's computer.
 
-## Setup (once)
+## Setup (once): use the CLI
 
-1. Ask the user for the agent id and token. Both are in Ghosty Studio → **Agentes → their agent →
-   Conexión con tu editor → Generar token** (token looks like `gat_…`; id is in the page URL
-   `/app/agents/<id>`).
-2. Keep them in env vars, never in command arguments or committed files:
+Run it with `npx -y @ghosty.studio/cli <command>` (or `ghosty <command>` if installed globally).
+Always pass `--json` and read stdout as JSON; notices go to stderr.
+
+**Sign in (the user just opens a link):**
 
 ```bash
-export GHOSTY_AGENT_ID="<id>"
-export GHOSTY_AGENT_TOKEN="gat_…"
+npx -y @ghosty.studio/cli login --json
+# first line: {"event":"login_url","url":"…"}  → show this link to the user and ask them to open it
+# then:       {"event":"logged_in","email":"…"} → done; the session is saved and renews itself
 ```
 
-Base URL: `https://www.ghosty.studio/api/v2/agents/$GHOSTY_AGENT_ID`. Every call:
-`-H "Authorization: Bearer $GHOSTY_AGENT_TOKEN"`. Wrong token or id → `404` (do not retry).
+Run it in the background or with a long timeout: it waits (up to 5 min) for the user to sign in
+in their browser. Any command exiting with code **3** means "not signed in" → run `login` again.
+
+Then `ghosty agents ls --json` gives the agent ids.
+
+**No browser available** (CI, remote box)? Ask the user for the agent token (Ghosty Studio →
+**Agentes → their agent → Conexión con tu editor → Generar token**, looks like `gat_…`) and put it
+in the environment, never in arguments or committed files: `export GHOSTY_TOKEN="gat_…"`. It
+reaches only that agent (no `agents ls`, no `chat`).
+
+Exit codes: `0` ok · `1` API error (read the message, don't retry blindly) · `2` usage error
+(check `--help`) · `3` not signed in.
+
+### Fallback: raw HTTP
+
+If Node is not available, use curl with the agent token. Base URL:
+`https://www.ghosty.studio/api/v2/agents/$GHOSTY_AGENT_ID`, header
+`Authorization: Bearer $GHOSTY_AGENT_TOKEN`. Wrong token or id → `404` (do not retry). Shapes in
+`references/api.md`.
 
 **Agent hosted on EasyBits** (`ghosty-lite` / `goose` template)? Same contract for `/prompt`,
 `/files`, `/skills/{slug}`, `/mcp`, `/restart`: base `https://www.easybits.cloud/api/v2/agents/$AGENT_ID`
@@ -35,7 +53,7 @@ there is `PATCH /` with `{ systemPrompt, systemPromptMode }` (`replace` = only y
 
 ## Know the engine first
 
-`GET …?fields=name,engine,model,hasMachine,prompt` before anything else. `hasMachine` decides
+`ghosty agents get <id> --fields name,engine,model,hasMachine,prompt --json` before anything else. `hasMachine` decides
 what applies:
 
 | `hasMachine` | Engines | You can | Identity (`prompt`) takes effect |
@@ -50,13 +68,14 @@ machine-less engine answer `409 agente_sin_maquina`: tell the user and stop.
 
 | User asks | Do |
 |---|---|
-| "set its identity / persona / system prompt" | write it with `references/identity.md`, `PATCH` with `{"prompt": "..."}`, then `restart` only if `hasMachine` |
-| "change the model" | `GET` first (lists `models`), then `PATCH {"model": "<id>"}` (restarts by itself) |
-| "give it these files / documents / knowledge" | `PUT …/files/<name>` with raw bytes, one call per file |
-| "install / teach it a skill" | `PUT …/skills/<slug>` with the SKILL.md markdown (+ assets), then `POST …/restart` |
-| "connect it to this MCP server" | `PUT …/mcp` with the full list of servers (it replaces; restarts by itself) |
-| "what does it have?" | `GET …?full=1` → prompt, model, files, skills, mcp (`?fields=` to read just some) |
-| "does it work? / test it" | `POST …/try {"text": "…"}` → the agent's answer (see Verify) |
+| "set its identity / persona / system prompt" | write it with `references/identity.md` to a file, `ghosty agents set <id> --prompt-file PROMPT.md`, then `ghosty agents restart <id>` only if `hasMachine` |
+| "change the model" | `ghosty agents get <id> --json` (lists `models`), then `ghosty agents set <id> --model <model-id>` (restarts by itself) |
+| "give it these files / documents / knowledge" | `ghosty files put <id> <name> --file <local>`, one per file |
+| "install / teach it a skill" | `ghosty skills add <id> <slug> --file SKILL.md` (or just `<slug>` from the catalog: `ghosty skills ls <id>`), then `ghosty agents restart <id>` |
+| "connect it to this MCP server" | `ghosty mcp get <id> --json > servers.json`, add the server, `ghosty mcp set <id> --file servers.json` (replaces; restarts by itself) |
+| "what does it have?" | `ghosty agents get <id> --json` → prompt, model, files, skills, mcp |
+| "does it work? / test it" | `ghosty try <id> "…" --json` → the agent's answer (see Verify) |
+| "talk to it / ask it something" | `ghosty chat <id> "…" --json` → streams `chunk` lines, ends with `done` |
 
 Read `references/api.md` for exact request/response shapes before calling.
 
@@ -91,10 +110,10 @@ exactly what changed, read the answer and tell the user whether it matches:
 | model | `¿Qué modelo eres?` → the label from `models` |
 
 ```bash
-curl -s -X POST "$B/try" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" \
-  -H "Content-Type: application/json" -d '{"text":"¿Quién eres y qué haces?","reset":true}'
+npx -y @ghosty.studio/cli try <id> --reset --json
+npx -y @ghosty.studio/cli try <id> "¿Quién eres y qué haces?" --json
 ```
 
-`reset: true` starts from a clean memory; use `session` to keep several test threads apart. A
+`--reset` starts from a clean memory; use `--session <name>` to keep several test threads apart. A
 machine that was asleep takes 5–15 s on the first call. Then tell the user in one line what
 changed and what the agent answered.
