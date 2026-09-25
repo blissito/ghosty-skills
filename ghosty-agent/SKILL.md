@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Configure a Ghosty Studio agent
@@ -76,6 +76,7 @@ machine-less engine answer `409 agente_sin_maquina`: tell the user and stop.
 | "what does it have?" | `ghosty agents get <id> --json` → prompt, model, files, skills, mcp |
 | "does it work? / test it" | `ghosty try <id> "…" --json` → the agent's answer (see Verify) |
 | "talk to it / ask it something" | `ghosty chat <id> "…" --json` → streams `chunk` lines, ends with `done` |
+| "have it do X every day / at 9 / remind me" | `ghosty schedule add <id> "…" --at ISO \| --in 30m [--every 12h --until ISO] [--title T]`; each run notifies the user's phone, an answer of exactly `OK` stays silent. `ghosty schedule ls|rm <id>` |
 
 Read `references/api.md` for exact request/response shapes before calling.
 
