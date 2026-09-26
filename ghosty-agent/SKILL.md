@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.4"
+  version: "1.5"
 ---
 
 # Configure a Ghosty Studio agent
@@ -68,8 +68,10 @@ machine-less engine answer `409 agente_sin_maquina`: tell the user and stop.
 
 | User asks | Do |
 |---|---|
+| "create a new agent" | `ghosty agents create --name <name> [--engine <engine>] [--model <model-id>] [--prompt-file PROMPT.md] [--env K=V,…] --json` → `id`. A model outside the engine answers 400 with the valid list |
 | "set its identity / persona / system prompt" | write it with `references/identity.md` to a file, `ghosty agents set <id> --prompt-file PROMPT.md`, then `ghosty agents restart <id>` only if `hasMachine` |
 | "change the model" | `ghosty agents get <id> --json` (lists `models`), then `ghosty agents set <id> --model <model-id>` (restarts by itself) |
+| "make it think more / less" (Ghosty · Lite) | `ghosty agents set <id> --env GHOSTY_THINKING_EFFORT=off\|low\|medium\|high\|max` |
 | "give it these files / documents / knowledge" | `ghosty files put <id> <name> --file <local>`, one per file |
 | "install / teach it a skill" | `ghosty skills add <id> <slug> --file SKILL.md` (or just `<slug>` from the catalog: `ghosty skills ls <id>`), then `ghosty agents restart <id>` |
 | "connect it to this MCP server" | `ghosty mcp get <id> --json > servers.json`, add the server, `ghosty mcp set <id> --file servers.json` (replaces; restarts by itself) |
