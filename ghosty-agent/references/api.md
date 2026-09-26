@@ -5,8 +5,8 @@ Base: `https://www.ghosty.studio/api/v2/agents/{id}` · Auth: `Authorization: Be
 Full spec: https://www.ghosty.studio/openapi.yaml · Docs: https://www.ghosty.studio/docs/configurar
 
 ## GET /
-Returns `{ id, name, engine, hasMachine, model, models: [{id,label}], prompt, channels, webSearch, mcp, messengerPages: [{pageId,pageName}], starters, tools: { gs: {name: bool}, extensions: {name: bool} } }`.
-`hasMachine` (bool) says whether files/skills/MCP/restart exist for this engine.
+Returns `{ id, name, engine, hasMachine, needsRestart, model, models: [{id,label}], prompt, channels, webSearch, mcp, messengerPages: [{pageId,pageName}], starters, tools: { gs: {name: bool}, extensions: {name: bool} } }`.
+Every agent has its own machine and disk: files, skills and MCP work on all engines. `needsRestart` (bool) is true for ACP engines (Ghosty · Lite, Goose), where new skills enter after `POST /restart`; on pool engines they enter on the next turn. `hasMachine` is legacy and always `true`.
 Add `?full=1` to also get `files: [{path,size}]`, `skills: [{slug,description,files}]` and `extensions: [{name,enabled}]`
 (wakes the machine if asleep). Add `?fields=prompt,model` to get only those keys (`id` always).
 
@@ -79,8 +79,8 @@ curl -s "$B/bundle" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" > agent.json
 ```
 
 ## POST /restart
-→ `{ reiniciado: true }`. Cuts a running turn; disk survives. Only with `hasMachine: true`;
-otherwise `409 agente_sin_maquina`.
+→ `{ reiniciado: true }`. Cuts a running turn; disk survives. Only with `needsRestart: true`;
+otherwise `409 restart_no_aplica` (pool engines load new config on the next turn by themselves).
 
 ## POST /try
 Body: `{ "text": "…", "session"?: "a-z0-9_-", "reset"?: bool }`. One full turn to text, no stream,
@@ -96,5 +96,5 @@ curl -s -X POST "$B/try" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" \
 
 ## Errors
 `400` invalid body (message in `error`) · `404` unknown id/token · `405` wrong method ·
-`409 agente_sin_maquina` only `POST /restart` needs an engine with its own machine (Ghosty · Lite or Goose). Files, skills, MCP, `GET`/`PATCH` work on every engine: the agent's **bundle** (`instructions.md`, `skills/`, `knowledge/`) lives in Studio (`storage: "bundle"`) and is seeded into the worker's cwd on each turn when it changed; on machines (`storage: "box"`) it is also written to `/data/agent` and `/data/work` ·
+`409 restart_no_aplica` only on `POST /restart` for pool engines (they load new config on the next turn; only Ghosty · Lite and Goose restart). Files, skills, MCP, `GET`/`PATCH` work on every engine: the agent's **bundle** (`instructions.md`, `skills/`, `knowledge/`) lives in Studio (`storage: "bundle"`) and is seeded into the worker's cwd on each turn when it changed; on machines (`storage: "box"`) it is also written to `/data/agent` and `/data/work` ·
 `413` too big · `502` saved but the machine did not take it (retry `POST /restart`).

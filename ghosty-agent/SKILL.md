@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.5"
+  version: "1.6"
 ---
 
 # Configure a Ghosty Studio agent
@@ -53,27 +53,29 @@ there is `PATCH /` with `{ systemPrompt, systemPromptMode }` (`replace` = only y
 
 ## Know the engine first
 
-`ghosty agents get <id> --fields name,engine,model,hasMachine,prompt --json` before anything else. `hasMachine` decides
-what applies:
+`ghosty agents get <id> --fields name,engine,model,needsRestart,prompt --json` before anything else. Every agent
+has its own machine and disk, so files, skills, MCP and `try` work on all of them. `needsRestart` only
+says how new config gets in:
 
-| `hasMachine` | Engines | You can | Identity (`prompt`) takes effect |
+| `needsRestart` | Engines | Files, skills and MCP take effect | Identity (`prompt`) takes effect |
 |---|---|---|---|
-| `true` | Ghosty · Lite, Goose | everything: files, skills, MCP, `restart`, `try` | on the next conversation, or right away with `POST …/restart` |
-| `false` | Claude, Codex, DeepSeek | `GET`, `PATCH` (name, model, prompt, webSearch, channels) and `try` | on the next conversation; **never call `restart`** (it answers `409`) |
+| `true` | Ghosty · Lite, Goose (ACP) | skills after `ghosty agents restart <id>`; MCP restarts by itself; files right away | on the next conversation, or right away with `restart` |
+| `false` | Claude, Codex, DeepSeek, Gemini (pool) | on the next turn, by themselves | on the next turn; **never call `restart`** (it answers `409 restart_no_aplica`) |
 
-The `PATCH` response carries a `nota` saying which case you are in. Files, skills and MCP on a
-machine-less engine answer `409 agente_sin_maquina`: tell the user and stop.
+The `PATCH` and skill responses carry a `nota` saying which case you are in. (`hasMachine` is
+legacy and always `true`.)
 
 ## What you can do
 
 | User asks | Do |
 |---|---|
 | "create a new agent" | `ghosty agents create --name <name> [--engine <engine>] [--model <model-id>] [--prompt-file PROMPT.md] [--env K=V,…] --json` → `id`. A model outside the engine answers 400 with the valid list |
-| "set its identity / persona / system prompt" | write it with `references/identity.md` to a file, `ghosty agents set <id> --prompt-file PROMPT.md`, then `ghosty agents restart <id>` only if `hasMachine` |
+| "set its identity / persona / system prompt" | write it with `references/identity.md` to a file, `ghosty agents set <id> --prompt-file PROMPT.md`, then `ghosty agents restart <id>` only if `needsRestart` |
+| "switch it to another engine" | `ghosty agents set <id> --engine <engine> [--model <model-id>]` (the model belongs to the NEW engine) |
 | "change the model" | `ghosty agents get <id> --json` (lists `models`), then `ghosty agents set <id> --model <model-id>` (restarts by itself) |
-| "make it think more / less" (Ghosty · Lite) | `ghosty agents set <id> --env GHOSTY_THINKING_EFFORT=off\|low\|medium\|high\|max` |
+| "make it think more / less" | Ghosty · Lite: `ghosty agents set <id> --env GHOSTY_THINKING_EFFORT=off\|low\|medium\|high\|max`. Codex: `--env FLEET_EFFORT=none\|minimal\|low\|medium\|high\|xhigh\|max` |
 | "give it these files / documents / knowledge" | `ghosty files put <id> <name> --file <local>`, one per file |
-| "install / teach it a skill" | `ghosty skills add <id> <slug> --file SKILL.md` (or just `<slug>` from the catalog: `ghosty skills ls <id>`), then `ghosty agents restart <id>` |
+| "install / teach it a skill" | `ghosty skills add <id> <slug> --file SKILL.md` (or just `<slug>` from the catalog: `ghosty skills ls <id>`), then `ghosty agents restart <id>` only if `needsRestart` |
 | "connect it to this MCP server" | `ghosty mcp get <id> --json > servers.json`, add the server, `ghosty mcp set <id> --file servers.json` (replaces; restarts by itself) |
 | "what does it have?" | `ghosty agents get <id> --json` → prompt, model, files, skills, mcp |
 | "does it work? / test it" | `ghosty try <id> "…" --json` → the agent's answer (see Verify) |
@@ -94,7 +96,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **MCP `PUT` replaces the whole list.** `GET …/mcp` first and send back the existing servers plus
   the new one. Only `https://` URLs for HTTP servers; stdio servers need the binary to exist in the
   agent's machine (Node and Python are there).
-- **Engines without their own machine** (Claude, DeepSeek, Codex) accept `GET`/`PATCH` (identity, model) only; files, skills, MCP and restart answer `409 agente_sin_maquina`. Tell the user and stop; do not retry.
+- **Pool engines** (Claude, Codex, DeepSeek, Gemini) have their own machine too: files, skills and MCP work and enter on the next turn. Only `restart` answers `409 restart_no_aplica` there; skip it.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
