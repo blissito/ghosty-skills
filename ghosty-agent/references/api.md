@@ -78,6 +78,9 @@ it: `instructions.md` → prompt, `skills/x.md` or `skills/x/SKILL.md` → skill
 curl -s "$B/bundle" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" > agent.json
 ```
 
+## DELETE /
+Deletes the agent and its machines. Owner only (`403` for an editor or a `gat_` token); `409` if a workspace has it active (the message names it). → `{ deleted: id }`.
+
 ## POST /restart
 → `{ reiniciado: true }`. Cuts a running turn; disk survives. Only with `needsRestart: true`;
 otherwise `409 restart_no_aplica` (pool engines load new config on the next turn by themselves).
