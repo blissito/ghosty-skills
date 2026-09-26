@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.7"
+  version: "1.8"
 ---
 
 # Configure a Ghosty Studio agent
@@ -71,6 +71,7 @@ legacy and always `true`.)
 |---|---|
 | "create a new agent" | `ghosty agents create --name <name> [--engine <engine>] [--model <model-id>] [--prompt-file PROMPT.md] [--env K=V,…] --json` → `id`. A model outside the engine answers 400 with the valid list |
 | "set its identity / persona / system prompt" | write it with `references/identity.md` to a file, `ghosty agents set <id> --prompt-file PROMPT.md`, then `ghosty agents restart <id>` only if `needsRestart` |
+| "let it see my Drive / use my connector" | `ghosty agents set <id> --connect google-drive` (owner only; the account must have it connected first). Files are the ones the owner picked in Conectores → Google Drive |
 | "delete this agent" | confirm with the user first, then `ghosty agents rm <id>` (owner only; `409` names the workspace where it is active) |
 | "switch it to another engine" | `ghosty agents set <id> --engine <engine> [--model <model-id>]` (the model belongs to the NEW engine) |
 | "change the model" | `ghosty agents get <id> --json` (lists `models`), then `ghosty agents set <id> --model <model-id>` (restarts by itself) |

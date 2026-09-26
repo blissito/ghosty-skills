@@ -78,6 +78,9 @@ it: `instructions.md` → prompt, `skills/x.md` or `skills/x/SKILL.md` → skill
 curl -s "$B/bundle" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" > agent.json
 ```
 
+## PATCH / — connectors
+`{ "connectors": { "google-drive": {} } }` grants the agent access to that account connector; `null` removes it. Drive also takes `files` (ids) and `clientWrite`. Owner only: `403` with a `gat_` token.
+
 ## DELETE /
 Deletes the agent and its machines. Owner only (`403` for an editor or a `gat_` token); `409` if a workspace has it active (the message names it). → `{ deleted: id }`.
 
