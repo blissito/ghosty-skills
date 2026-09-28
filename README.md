@@ -15,6 +15,7 @@ npx skills add https://ghosty.studio
 | `ghosty-docs` | read the Ghosty docs from an agent: markdown pages, `llms.txt`, the docs MCP server |
 | `ghosty-acp` | connect Zed, VS Code, JetBrains or Neovim to the agent over ACP |
 | `ghosty-recipe` | write or review an agent recipe (`.recipe.yaml`) to upload in the creator |
+| `ghosty-factory` | prepare a repo for the Ghosty Software Factory: `AGENTS.md`, the `docs/agents/` knowledge base, `.ghosty/factory.md` (agent and model per role) |
 
 This directory is mirrored from `public/skills/` in
 [blissito/ghosty-studio](https://github.com/blissito/ghosty-studio). Docs: https://www.ghosty.studio/docs/configurar
