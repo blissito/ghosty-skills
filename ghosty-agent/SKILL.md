@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.8"
+  version: "1.9"
 ---
 
 # Configure a Ghosty Studio agent
@@ -82,6 +82,15 @@ legacy and always `true`.)
 | "what does it have?" | `ghosty agents get <id> --json` → prompt, model, files, skills, mcp |
 | "does it work? / test it" | `ghosty try <id> "…" --json` → the agent's answer (see Verify) |
 | "talk to it / ask it something" | `ghosty chat <id> "…" --json` → streams `chunk` lines, ends with `done` |
+| "is it configured right? / why does it answer badly?" | `ghosty agents doctor <id> --json` → `checks[]` with `level` (ok/warn/error) and a `fix` command each; exit 1 = something to fix |
+| "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error` |
+| "give it this database / what can it write" | `ghosty dbs ls <id>`, `ghosty dbs tables <id> <db>`, `ghosty dbs grant <id> <db> [--external-write t1,t2]` (tables it may write from WhatsApp/Messenger) |
+| "copy its data from EasyBits" | `ghosty dbs import <id> <db> --from easybits:<db-id> --dry-run` first (needs `EASYBITS_API_KEY`), show the plan, then run without `--dry-run` (`--yes` if replacing rows) |
+| "let it read / send this document" | `ghosty agents docs ls <id>`, `ghosty agents docs grant <id> "<name>" [--write] [--no-deliver]` |
+| "answer with voice notes" | `ghosty agents set <id> --voice elevenlabs:<voice-id>\|kokoro:em_santa --voice-replies auto` |
+| "answer this WhatsApp number" | confirm with the user (real customers), then `ghosty channels whatsapp enable <id> <number> --yes`; `--dry-run` shows the plan |
+| "save my ElevenLabs / MercadoPago key" | never put the key in a command: ask the user to run `ghosty credentials set <provider>` themselves (hidden prompt), or use `--from-env VAR` |
+| "remove this skill" | `ghosty skills rm <id> <slug> --yes` keeps a local copy and returns `restore`; `ghosty skills get <id> <slug>` to back one up first |
 | "have it do X every day / at 9 / remind me" | `ghosty schedule add <id> "…" --at ISO \| --in 30m [--every 12h --until ISO] [--title T]`; each run notifies the user's phone, an answer of exactly `OK` stays silent. `ghosty schedule ls|rm <id>` |
 
 Read `references/api.md` for exact request/response shapes before calling.
@@ -102,6 +111,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
+- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
 
 ## Verify
 
