@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.13"
+  version: "1.14"
 ---
 
 # Configure a Ghosty Studio agent
@@ -108,7 +108,7 @@ legacy and always `true`.)
 | "let people try it without an account / share a demo" | `ghosty agents demo <id> --slug <name> --on [--vence "YYYY-MM-DDTHH:MM"] [--welcome T] [--starter T] [--chips "a\|b"] --json` → `url`; no flags = status; `--rotate` if the link leaked, `--off` to stop |
 | "what files are in my account?" | `ghosty me files ls [--kind document] --json`; `me files upload <path>`, `me files rm <file-id>` |
 | "clean up the board / archive test cards" | `ghosty board archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
-| "which conversations does it have?" | `ghosty conversations ls <id> --json`; continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
+| "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
 | "what's in its database? / fix this row" | `ghosty dbs query <id> <db> "SELECT …" [--arg V]… --json` (read only); `--write` only for a change the user asked for |
 | "stop giving it this database" | `ghosty dbs revoke <id> <db>` (prints the `grant` that undoes it) |
 | "give an agent to each of MY customers (partner)" | not for a normal owner: see https://www.ghosty.studio/docs/cli/partners.md (`ghosty partner --help`) |
