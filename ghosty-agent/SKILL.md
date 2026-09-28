@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.15"
+  version: "1.16"
 ---
 
 # Configure a Ghosty Studio agent
@@ -102,6 +102,7 @@ legacy and always `true`.)
 | "let it read / send this document" | `ghosty agents docs ls <id>`, `ghosty agents docs grant <id> "<name>" [--write] [--no-deliver]` |
 | "answer with voice notes" | `ghosty agents set <id> --voice elevenlabs:<voice-id>\|kokoro:em_santa --voice-replies auto` |
 | "answer in this WhatsApp group / make the group team or customer" | personal WhatsApp only: `ghosty channels wa groups ls <id> --json`, then confirm with the user and `ghosty channels wa groups set <id> "<group>" --role equipo\|cliente --on --yes` (`--dry-run` first) |
+| "move / migrate this WhatsApp number from EasyBits or Formmy" | Business: `ghosty channels whatsapp link <id> --integration <formmy-id> --answer on\|off --dry-run --json` → show `plan`; confirm with the user (on = answers real customers), then without `--dry-run` and `--yes`; back: `unlink`. Personal: `ghosty channels wa import <id> --from-file F --own-number yes\|no --dry-run` (the user turns off EasyBits WITHOUT logout first), then `wa status` |
 | "answer this WhatsApp number" | confirm with the user (real customers), then `ghosty channels whatsapp enable <id> <number> --yes`; `--dry-run` shows the plan |
 | "save my ElevenLabs / MercadoPago key" | never put the key in a command: ask the user to run `ghosty credentials set <provider>` themselves (hidden prompt), or use `--from-env VAR` |
 | "remove this skill" | `ghosty skills rm <id> <slug> --yes` keeps a local copy and returns `restore`; `ghosty skills get <id> <slug> --out DIR` to back one up first (without `--out` it only lists) |
@@ -133,7 +134,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
-- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups set --on`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
+- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups set --on`, `channels whatsapp link|unlink`, `channels wa import`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
 
 ## Verify
 
