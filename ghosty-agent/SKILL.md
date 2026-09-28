@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.10"
+  version: "1.11"
 ---
 
 # Configure a Ghosty Studio agent
@@ -28,6 +28,14 @@ npx -y @ghostystudio/cli login --json
 
 Run it in the background or with a long timeout: it waits (up to 5 min) for the user to sign in
 in their browser. Any command exiting with code **3** means "not signed in" → run `login` again.
+
+**Remote box, SSH or CI?** `login` switches by itself to a device code (`--device` forces it): the
+`login_url` line then carries `"code"` too; pass the link to the user and tell them to check the
+code matches before authorizing.
+
+**Several accounts** (the user's and a customer's)? `--profile <name>` (or `GHOSTY_PROFILE`) keeps
+a separate saved session per name: `ghosty --profile cliente login --json`, then the same
+`--profile` on every command.
 
 Then `ghosty agents ls --json` gives the agent ids.
 
@@ -93,6 +101,14 @@ legacy and always `true`.)
 | "answer this WhatsApp number" | confirm with the user (real customers), then `ghosty channels whatsapp enable <id> <number> --yes`; `--dry-run` shows the plan |
 | "save my ElevenLabs / MercadoPago key" | never put the key in a command: ask the user to run `ghosty credentials set <provider>` themselves (hidden prompt), or use `--from-env VAR` |
 | "remove this skill" | `ghosty skills rm <id> <slug> --yes` keeps a local copy and returns `restore`; `ghosty skills get <id> <slug>` to back one up first |
+| "how much have I used? / am I out of usage?" | `ghosty usage --json` → `plan.name`, `week.pct` / `month.pct` (0–1), `exhausted` |
+| "let people try it without an account / share a demo" | `ghosty agents demo <id> --slug <name> --on [--vence "YYYY-MM-DDTHH:MM"] [--welcome T] [--starter T] [--chips "a\|b"] --json` → `url`; no flags = status; `--rotate` if the link leaked, `--off` to stop |
+| "what files are in my account?" | `ghosty me files ls [--kind document] --json`; `me files upload <path>`, `me files rm <file-id>` |
+| "clean up the board / archive test cards" | `ghosty board archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
+| "which conversations does it have?" | `ghosty conversations ls <id> --json`; continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
+| "what's in its database? / fix this row" | `ghosty dbs query <id> <db> "SELECT …" [--arg V]… --json` (read only); `--write` only for a change the user asked for |
+| "stop giving it this database" | `ghosty dbs revoke <id> <db>` (prints the `grant` that undoes it) |
+| "give an agent to each of MY customers (partner)" | not for a normal owner: see https://www.ghosty.studio/docs/cli/partners.md (`ghosty partner --help`) |
 | "have it do X every day / at 9 / remind me" | `ghosty schedule add <id> "…" --at ISO \| --in 30m [--every 12h --until ISO] [--title T]`; each run notifies the user's phone, an answer of exactly `OK` stays silent. `ghosty schedule ls|rm <id>` |
 
 Read `references/api.md` for exact request/response shapes before calling.

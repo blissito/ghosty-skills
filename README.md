@@ -11,7 +11,7 @@ npx skills add https://ghosty.studio
 
 | Skill | What for |
 |---|---|
-| `ghosty-agent` | configure a Ghosty Studio agent through its API: identity, model, files, skills, MCP servers |
+| `ghosty-agent` | configure, test and chat with a Ghosty Studio agent with the `ghosty` CLI (its REST API as a fallback): identity, model, files, skills, MCP servers, databases, demos |
 | `ghosty-docs` | read the Ghosty docs from an agent: markdown pages, `llms.txt`, the docs MCP server |
 | `ghosty-acp` | connect Zed, VS Code, JetBrains or Neovim to the agent over ACP |
 | `ghosty-recipe` | write or review an agent recipe (`.recipe.yaml`) to upload in the creator |
