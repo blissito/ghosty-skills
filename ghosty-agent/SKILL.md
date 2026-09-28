@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.12"
+  version: "1.13"
 ---
 
 # Configure a Ghosty Studio agent
@@ -97,7 +97,7 @@ legacy and always `true`.)
 | "why was it slow? / where did the time go?" | `ghosty turns show <id> [turn-id] --json` → `byTool` (seconds per tool), `steps` (timeline), `totals.outputTokens`; pool engines only |
 | "is it running the new image? / it still behaves old" | `ghosty agents box <id> --check <path-the-new-image-brings> --json` → `stale`; if > 0, `ghosty agents box <id> --recycle`, one turn, check again (ACP: `agents restart`) |
 | "which PDF templates does it have?" | `ghosty skills templates <id> --json` → `templates[]` with `source` (`agente:<skill>` or `casa`); its own go in `<skill>/pdf-templates/<name>.html` |
-| "give it this database / what can it write" | `ghosty dbs ls <id>`, `ghosty dbs tables <id> <db>`, `ghosty dbs grant <id> <db> [--external-write t1,t2]` (tables it may write from WhatsApp/Messenger) |
+| "give it this database / what can it write" | `ghosty dbs ls <id>`, `ghosty dbs tables <id> <db>`, `ghosty dbs grant <id> <db> [--external-write t1,t2] [--external-rows t:col+col]` (tables it may write from WhatsApp/Messenger; tables where each customer sees only their own rows, matched by phone column — use it for any customers/orders table) |
 | "copy its data from EasyBits" | `ghosty dbs import <id> <db> --from easybits:<db-id> --dry-run` first (needs `EASYBITS_API_KEY`), show the plan, then run without `--dry-run` (`--yes` if replacing rows) |
 | "let it read / send this document" | `ghosty agents docs ls <id>`, `ghosty agents docs grant <id> "<name>" [--write] [--no-deliver]` |
 | "answer with voice notes" | `ghosty agents set <id> --voice elevenlabs:<voice-id>\|kokoro:em_santa --voice-replies auto` |
