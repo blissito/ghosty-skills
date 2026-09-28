@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.16"
+  version: "1.17"
 ---
 
 # Configure a Ghosty Studio agent
