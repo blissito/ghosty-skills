@@ -81,6 +81,7 @@ legacy and always `true`.)
 | "set its identity / persona / system prompt" | write it with `references/identity.md` to a file, `ghosty agents set <id> --prompt-file PROMPT.md`, then `ghosty agents restart <id>` only if `needsRestart` |
 | "let it see my Drive / use my connector" | `ghosty agents set <id> --connect google-drive` (owner only; the account must have it connected first). Files are the ones the owner picked in Conectores → Google Drive |
 | "edit its (long) prompt" | `ghosty agents get <id> --prompt-out PROMPT.md`, edit the file, `ghosty agents set <id> --prompt-file PROMPT.md` |
+| "base its prompt on another agent's (a branch, a variant)" | write an overlay `{"edits":[{"what","find","replace","regex"?,"all"?}]}`, `ghosty agents set <id> --prompt-base <base-id> --prompt-overlay overlay.json --dry-run --out /tmp/p.md`, check, then without `--dry-run`. It regenerates when the base changes; its own prompt can't be edited while linked (`--prompt-base none` unlinks) |
 | "give it the CRM / sales tools" | `ghosty agents set <id> --toolsets +crm` (a plain list replaces; `-x` removes) |
 | "share it with / give access to <email>" | `ghosty agents share <id> <email> [--role editor\|admin]` (keeps ownership); `ghosty agents shares <id>` lists; `unshare` needs `--yes` |
 | "turn off / on this skill" | `ghosty skills off\|on <id> <slug>` (its own or one of Ghosty's; `skills ls` shows `on`) |
