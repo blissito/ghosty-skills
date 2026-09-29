@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.18"
+  version: "1.19"
 ---
 
 # Configure a Ghosty Studio agent
@@ -95,7 +95,8 @@ legacy and always `true`.)
 | "what does it have?" | `ghosty agents get <id> --json` → prompt, model, files, skills, mcp |
 | "does it work? / test it" | `ghosty try <id> "…" --json` → the agent's answer (see Verify) |
 | "talk to it / ask it something" | `ghosty chat <id> "…" --json` → streams `chunk` lines, ends with `done` |
-| "test it as a WhatsApp customer / with a photo / with earlier context" | `ghosty try <id> "…" --waba --session <made-up phone> [--media FILE] [--history FILE --reset] --json` → `sent[]` (what it would send; nothing leaves) |
+| "test it as a WhatsApp customer / with a photo / with earlier context" | `ghosty try <id> "…" --waba --session <made-up phone> [--media FILE] [--history FILE --reset] --json` → `sent[]` (what it would send, tools included: `kind` text/voice/file/rich with `rich` ubicacion/cita/boton/contacto/reaccion; nothing leaves). A customer attachment exactly as Formmy delivers it: add `--as-formmy` → `media.copied` |
+| "show me this customer's chat on the board / did the attachment arrive?" | `ghosty board ls <id> [--q name-or-phone] --json`, then `ghosty board show <id> <folio\|phone> [--limit 50] --json` → `messages[]` with `role`, `content`, `mediaType`, `mediaCopied` |
 | "replay these real conversations" | `ghosty try <id> --replay sample.json --out ./replay [--max N]`; read `./replay/replay.json`; `--resume` if it was cut |
 | "is it configured right? / why does it answer badly?" | `ghosty agents doctor <id> --json` → `checks[]` with `level` (ok/warn/error) and a `fix` command each; exit 1 = something to fix |
 | "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error` |
