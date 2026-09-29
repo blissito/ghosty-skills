@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.26"
+  version: "1.27"
 ---
 
 # Configure a Ghosty Studio agent
@@ -114,6 +114,9 @@ legacy and always `true`.)
 | "give it this database / what can it write" | `ghosty dbs ls <id>`, `ghosty dbs tables <id> <db>`, `ghosty dbs grant <id> <db> [--external-write t1,t2] [--external-rows t:col+col]` (tables it may write from WhatsApp/Messenger; tables where each customer sees only their own rows, matched by phone column — use it for any customers/orders table) |
 | "are the catalog photos permanent? / photos stopped showing on WhatsApp" | `ghosty dbs tables <id> <db>` → per photo column permanent · external · empty; external ones: `ghosty dbs rehost <id> <db> --table T --column C` |
 | "here are the photos the customer sent" (a folder named by SKU) | `ghosty dbs photos put <id> <db> --table catalogo --key-column sku --dir <folder> --dry-run`, show which SKUs have no row, then without `--dry-run` |
+| "remove these env variables" | `ghosty agents set <id> --unset-env K1,K2` |
+| "how many boxes / how much capacity does it have?" | `ghosty agents box <id> --json` → `capacity`; per workspace: `ghosty usage --boxes --workspace <slug> --json` |
+| "apply the new plan now" | `ghosty plan apply <workspace> --dry-run`, show the changes and monthly total, confirm, then without `--dry-run` (`--yes`) |
 | "copy its data from EasyBits" | `ghosty dbs import <id> <db> --from easybits:<db-id> --dry-run` first (needs `EASYBITS_API_KEY`), show the plan, then run without `--dry-run` (`--yes` if replacing rows) |
 | "let it read / send this document" | `ghosty agents docs ls <id>`, `ghosty agents docs grant <id> "<name>" [--write] [--no-deliver]`; a new one: `ghosty agents docs add <id> --url <url> \| --file <path> [--description T]` (uploads and grants); several: `grant <id> "A" "B"` or `--like <other-id>` |
 | "answer with voice notes" | `ghosty agents set <id> --voice elevenlabs:<voice-id>\|kokoro:em_santa --voice-replies auto` |
