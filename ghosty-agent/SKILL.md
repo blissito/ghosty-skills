@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.20"
+  version: "1.21"
 ---
 
 # Configure a Ghosty Studio agent
@@ -80,7 +80,7 @@ legacy and always `true`.)
 | "create a new agent" | `ghosty agents create --name <name> [--engine <engine>] [--model <model-id>] [--prompt-file PROMPT.md] [--env K=V,…] [--workspace <slug>] [--channels teams=off] --json` → `id`. A model outside the engine answers 400 with the valid list. `--workspace` = born in that workspace, owned by its owner, active in its Teams |
 | "set its identity / persona / system prompt" | write it with `references/identity.md` to a file, `ghosty agents set <id> --prompt-file PROMPT.md`, then `ghosty agents restart <id>` only if `needsRestart` |
 | "let it see my Drive / use my connector" | `ghosty agents set <id> --connect google-drive` (owner only; the account must have it connected first). Files are the ones the owner picked in Conectores → Google Drive |
-| "make an agent like <other> / same setup as" | `ghosty agents create --name <n> --like <other-id> --dry-run` (lists what it copies: skills, toolsets, connectors, voice, databases, documents, board, shares — never prompt, env or channels), then without `--dry-run`, then give it its own prompt |
+| "make an agent like <other> / same setup as" | `ghosty agents create --name <n> --like <other-id> --dry-run` (lists what it copies: skills, toolsets, connectors, voice, databases, documents, board, shares — never prompt, env or channels), then without `--dry-run`, then give it its own prompt. `--board new` gives it its own board (source's columns), `--no-notify` shares without emailing people — ask the user which they want |
 | "which toolsets / connectors does it really have?" | `ghosty agents get <id> --fields toolsets,connectors --json` → effective `toolsets[]` and `connectors[]` with `connected`, `granted`, `effective` |
 | "turn off most of Ghosty's skills" | `ghosty skills house <id> --only a,b --dry-run`, then without `--dry-run` (`--enable`/`--disable` for a few) |
 | "one board per number / move these cards to another board" | `ghosty boards ls <workspace>`, `boards create <workspace> "<name>" --columns-from main`, `boards assign <agent-id> "<name>"`, `boards move-cards <workspace> --from main --to "<name>" --integration <formmy-id> --dry-run` then `--yes` after confirming; `boards rm <workspace> "<name>" --yes` deletes an empty one |
