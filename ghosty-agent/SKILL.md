@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.27"
+  version: "1.28"
 ---
 
 # Configure a Ghosty Studio agent
@@ -106,7 +106,7 @@ legacy and always `true`.)
 | "show me this customer's chat on the board / did the attachment arrive?" | `ghosty cards ls <id> [--q name-or-phone] --json`, then `ghosty cards show <id> <folio\|phone> [--limit 50] --json` → `messages[]` with `role`, `content`, `mediaType`, `mediaCopied` |
 | "replay these real conversations" | `ghosty try <id> --replay sample.json --out ./replay [--max N]`; read `./replay/replay.json`; `--resume` if it was cut |
 | "is it configured right? / why does it answer badly?" | `ghosty agents doctor <id> --json` → `checks[]` with `level` (ok/warn/error) and a `fix` command each; exit 1 = something to fix |
-| "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error` |
+| "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error`; a WhatsApp customer got NO turn at all: `ghosty turns ls <id> --skipped --since 24h --json` → `reason` (manual_mode, records_only, paused, reaction, channel_off, no_quota) |
 | "what did it answer to that? / audit a reply" | `ghosty turns show <id> [turn-id] --json` → `input` (what came in) and `output` (what it answered), any engine or channel |
 | "why was it slow? / where did the time go?" | `ghosty turns show <id> [turn-id] --json` → `byTool` (seconds per tool), `steps` (timeline), `totals.outputTokens`; pool engines only (`timeline: false` otherwise) |
 | "is it running the new image? / it still behaves old" | `ghosty agents box <id> --check <path-the-new-image-brings> --json` → `stale`; if > 0, `ghosty agents box <id> --recycle`, one turn, check again (ACP: `agents restart`) |
@@ -117,11 +117,12 @@ legacy and always `true`.)
 | "remove these env variables" | `ghosty agents set <id> --unset-env K1,K2` |
 | "how many boxes / how much capacity does it have?" | `ghosty agents box <id> --json` → `capacity`; per workspace: `ghosty usage --boxes --workspace <slug> --json` |
 | "apply the new plan now" | `ghosty plan apply <workspace> --dry-run`, show the changes and monthly total, confirm, then without `--dry-run` (`--yes`) |
-| "copy its data from EasyBits" | `ghosty dbs import <id> <db> --from easybits:<db-id> --dry-run` first (needs `EASYBITS_API_KEY`), show the plan, then run without `--dry-run` (`--yes` if replacing rows) |
+| "copy its data from EasyBits" | `ghosty dbs import <id> <db> --from easybits:<db-id> --dry-run` first (needs `EASYBITS_API_KEY`), show the plan (and `gsOnly`: rows written in gs that replacing would delete — then use `--tables` or `--append`), then run without `--dry-run` (`--yes` if replacing rows) |
+| "rename this database / delete an unused one" | `ghosty dbs rename <id> <db> <new> --dry-run --json` → `references` (prompts, env, skills it rewrites too), confirm, then without `--dry-run`; unused: `ghosty dbs ls <id> --orphans`, `ghosty dbs rm <id> <db> --dry-run`, confirm with the user, then `--yes` |
 | "let it read / send this document" | `ghosty agents docs ls <id>`, `ghosty agents docs grant <id> "<name>" [--write] [--no-deliver]`; a new one: `ghosty agents docs add <id> --url <url> \| --file <path> [--description T]` (uploads and grants); several: `grant <id> "A" "B"` or `--like <other-id>` |
 | "answer with voice notes" | `ghosty agents set <id> --voice elevenlabs:<voice-id>\|kokoro:em_santa --voice-replies auto` |
 | "answer in this WhatsApp group / make the group team or customer" | personal WhatsApp only: `ghosty channels wa groups ls <id> --json`, then confirm with the user and `ghosty channels wa groups enable <id> "<group>" --role equipo\|cliente --yes` (`--dry-run` first) |
-| "move / migrate this WhatsApp number from EasyBits or Formmy" | Business: `ghosty channels whatsapp link <id> --integration <formmy-id> --answer on\|off --dry-run --json` → show `plan`; confirm with the user (on = answers real customers), then without `--dry-run` and `--yes`; back: `unlink`. Its recent cards/messages/orders: `ghosty channels whatsapp history <id> --integration <formmy-id> --days 7 --dry-run`, then without `--dry-run` (`--yes`; re-running never duplicates). Personal: `ghosty channels wa import <id> --from-file F` (EasyBits JSON) or `--from-dir DIR` (Baileys multi-file folder) `--own-number yes\|no --dry-run` (the user turns off EasyBits WITHOUT logout first), then `wa status` |
+| "move / migrate this WhatsApp number from EasyBits or Formmy" | Business: find its Integration id and who answers it today with `ghosty channels whatsapp integrations <id> --json`, then `ghosty channels whatsapp link <id> --integration <formmy-id> --answer on\|off --dry-run --json` → show `plan`; confirm with the user (on = answers real customers), then without `--dry-run` and `--yes`; back: `unlink`. Its recent cards/messages/orders: `ghosty channels whatsapp history <id> --integration <formmy-id> --days 7 --dry-run` (works before linking), then without `--dry-run` (`--yes`; re-running never duplicates). Personal: `ghosty channels wa import <id> --from-file F` (EasyBits JSON) or `--from-dir DIR` (Baileys multi-file folder) `--own-number yes\|no --dry-run` (the user turns off EasyBits WITHOUT logout first), then `wa status` |
 | "answer this WhatsApp number" | confirm with the user (real customers), then `ghosty channels whatsapp enable <id> <number> --yes`; `--dry-run` shows the plan |
 | "save my ElevenLabs / MercadoPago key" | never put the key in a command: ask the user to run `ghosty credentials set <provider>` themselves (hidden prompt), or use `--from-env VAR` |
 | "remove this skill" | `ghosty skills rm <id> <slug> --yes` keeps a local copy and returns `restore`; `ghosty skills get <id> <slug> --out DIR` to back one up first (without `--out` it only lists) |
@@ -153,7 +154,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
-- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups set --on`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
+- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups enable`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
 
 ## Verify
 
