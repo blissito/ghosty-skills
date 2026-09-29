@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.22"
+  version: "1.23"
 ---
 
 # Configure a Ghosty Studio agent
@@ -89,7 +89,7 @@ legacy and always `true`.)
 | "base its prompt on another agent's (a branch, a variant)" | write an overlay `{"edits":[{"what","find","replace","regex"?,"all"?}]}`, `ghosty agents set <id> --prompt-base <base-id> --prompt-overlay overlay.json --dry-run --out /tmp/p.md`, check, then without `--dry-run`. It regenerates when the base changes; its own prompt can't be edited while linked (`--prompt-base none` unlinks) |
 | "give it the CRM / sales tools" | `ghosty agents set <id> --toolsets +crm` (a plain list replaces; `-x` removes) |
 | "share it with / give access to <email>" | `ghosty agents share <id> <email> [--role editor\|admin]` (keeps ownership); `ghosty agents shares <id>` lists; `unshare` needs `--yes` |
-| "turn off / on this skill" | `ghosty skills off\|on <id> <slug>` (its own or one of Ghosty's; `skills ls` shows `on`) |
+| "turn off / on this skill" | `ghosty skills disable\|enable <id> <slug>` (its own or one of Ghosty's; `skills ls` shows `on`) |
 | "delete this agent" | confirm with the user first, then `ghosty agents rm <id>` (owner only; `409` names the workspace where it is active) |
 | "switch it to another engine" | `ghosty agents set <id> --engine <engine> [--model <model-id>]` (the model belongs to the NEW engine) |
 | "change the model" | `ghosty agents get <id> --json` (lists `models`), then `ghosty agents set <id> --model <model-id>` (restarts by itself) |
@@ -101,7 +101,7 @@ legacy and always `true`.)
 | "does it work? / test it" | `ghosty try <id> "…" --json` → the agent's answer (see Verify) |
 | "talk to it / ask it something" | `ghosty chat <id> "…" --json` → streams `chunk` lines, ends with `done` |
 | "test it as a WhatsApp customer / with a photo / with earlier context" | `ghosty try <id> "…" --waba --session <made-up phone> [--media FILE] [--history FILE --reset] --json` → `sent[]` (what it would send, tools included: `kind` text/voice/file/rich with `rich` ubicacion/cita/boton/contacto/reaccion; nothing leaves). A customer attachment exactly as Formmy delivers it: add `--as-formmy` → `media.copied` |
-| "show me this customer's chat on the board / did the attachment arrive?" | `ghosty board ls <id> [--q name-or-phone] --json`, then `ghosty board show <id> <folio\|phone> [--limit 50] --json` → `messages[]` with `role`, `content`, `mediaType`, `mediaCopied` |
+| "show me this customer's chat on the board / did the attachment arrive?" | `ghosty cards ls <id> [--q name-or-phone] --json`, then `ghosty cards show <id> <folio\|phone> [--limit 50] --json` → `messages[]` with `role`, `content`, `mediaType`, `mediaCopied` |
 | "replay these real conversations" | `ghosty try <id> --replay sample.json --out ./replay [--max N]`; read `./replay/replay.json`; `--resume` if it was cut |
 | "is it configured right? / why does it answer badly?" | `ghosty agents doctor <id> --json` → `checks[]` with `level` (ok/warn/error) and a `fix` command each; exit 1 = something to fix |
 | "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error` |
@@ -113,15 +113,15 @@ legacy and always `true`.)
 | "copy its data from EasyBits" | `ghosty dbs import <id> <db> --from easybits:<db-id> --dry-run` first (needs `EASYBITS_API_KEY`), show the plan, then run without `--dry-run` (`--yes` if replacing rows) |
 | "let it read / send this document" | `ghosty agents docs ls <id>`, `ghosty agents docs grant <id> "<name>" [--write] [--no-deliver]`; a new one: `ghosty agents docs add <id> --url <url> \| --file <path> [--description T]` (uploads and grants); several: `grant <id> "A" "B"` or `--like <other-id>` |
 | "answer with voice notes" | `ghosty agents set <id> --voice elevenlabs:<voice-id>\|kokoro:em_santa --voice-replies auto` |
-| "answer in this WhatsApp group / make the group team or customer" | personal WhatsApp only: `ghosty channels wa groups ls <id> --json`, then confirm with the user and `ghosty channels wa groups set <id> "<group>" --role equipo\|cliente --on --yes` (`--dry-run` first) |
+| "answer in this WhatsApp group / make the group team or customer" | personal WhatsApp only: `ghosty channels wa groups ls <id> --json`, then confirm with the user and `ghosty channels wa groups enable <id> "<group>" --role equipo\|cliente --yes` (`--dry-run` first) |
 | "move / migrate this WhatsApp number from EasyBits or Formmy" | Business: `ghosty channels whatsapp link <id> --integration <formmy-id> --answer on\|off --dry-run --json` → show `plan`; confirm with the user (on = answers real customers), then without `--dry-run` and `--yes`; back: `unlink`. Its recent cards/messages/orders: `ghosty channels whatsapp history <id> --integration <formmy-id> --days 7 --dry-run`, then without `--dry-run` (`--yes`; re-running never duplicates). Personal: `ghosty channels wa import <id> --from-file F` (EasyBits JSON) or `--from-dir DIR` (Baileys multi-file folder) `--own-number yes\|no --dry-run` (the user turns off EasyBits WITHOUT logout first), then `wa status` |
 | "answer this WhatsApp number" | confirm with the user (real customers), then `ghosty channels whatsapp enable <id> <number> --yes`; `--dry-run` shows the plan |
 | "save my ElevenLabs / MercadoPago key" | never put the key in a command: ask the user to run `ghosty credentials set <provider>` themselves (hidden prompt), or use `--from-env VAR` |
 | "remove this skill" | `ghosty skills rm <id> <slug> --yes` keeps a local copy and returns `restore`; `ghosty skills get <id> <slug> --out DIR` to back one up first (without `--out` it only lists) |
 | "how much have I used? / am I out of usage?" | `ghosty usage --json` → `plan.name`, `week.pct` / `month.pct` (0–1), `exhausted` |
-| "let people try it without an account / share a demo" | `ghosty agents demo <id> --slug <name> --on [--vence "YYYY-MM-DDTHH:MM"] [--welcome T] [--starter T] [--chips "a\|b"] --json` → `url`; no flags = status; `--rotate` if the link leaked, `--off` to stop |
+| "let people try it without an account / share a demo" | `ghosty agents demo <id> --slug <name> [--expires "YYYY-MM-DDTHH:MM"] [--welcome T] [--starter T] [--chips "a\|b"] --json` then `ghosty agents demo enable <id>` → `url`; no flags = status; `--rotate` if the link leaked, `--off` to stop |
 | "what files are in my account?" | `ghosty me files ls [--kind document] --json`; `me files upload <path>`, `me files rm <file-id>` |
-| "clean up the board / archive test cards" | `ghosty board archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
+| "clean up the board / archive test cards" | `ghosty cards archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
 | "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
 | "what's in its database? / fix this row" | `ghosty dbs query <id> <db> "SELECT …" [--arg V]… --json` (read only); `--write` only for a change the user asked for |
 | "stop giving it this database" | `ghosty dbs revoke <id> <db>` (prints the `grant` that undoes it) |
