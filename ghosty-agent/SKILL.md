@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.19"
+  version: "1.20"
 ---
 
 # Configure a Ghosty Studio agent
@@ -80,6 +80,10 @@ legacy and always `true`.)
 | "create a new agent" | `ghosty agents create --name <name> [--engine <engine>] [--model <model-id>] [--prompt-file PROMPT.md] [--env K=V,…] [--workspace <slug>] [--channels teams=off] --json` → `id`. A model outside the engine answers 400 with the valid list. `--workspace` = born in that workspace, owned by its owner, active in its Teams |
 | "set its identity / persona / system prompt" | write it with `references/identity.md` to a file, `ghosty agents set <id> --prompt-file PROMPT.md`, then `ghosty agents restart <id>` only if `needsRestart` |
 | "let it see my Drive / use my connector" | `ghosty agents set <id> --connect google-drive` (owner only; the account must have it connected first). Files are the ones the owner picked in Conectores → Google Drive |
+| "make an agent like <other> / same setup as" | `ghosty agents create --name <n> --like <other-id> --dry-run` (lists what it copies: skills, toolsets, connectors, voice, databases, documents, board, shares — never prompt, env or channels), then without `--dry-run`, then give it its own prompt |
+| "which toolsets / connectors does it really have?" | `ghosty agents get <id> --fields toolsets,connectors --json` → effective `toolsets[]` and `connectors[]` with `connected`, `granted`, `effective` |
+| "turn off most of Ghosty's skills" | `ghosty skills house <id> --only a,b --dry-run`, then without `--dry-run` (`--enable`/`--disable` for a few) |
+| "one board per number / move these cards to another board" | `ghosty boards ls <workspace>`, `boards create <workspace> "<name>" --columns-from main`, `boards assign <agent-id> "<name>"`, `boards move-cards <workspace> --from main --to "<name>" --integration <formmy-id> --dry-run` then `--yes` after confirming |
 | "edit its (long) prompt" | `ghosty agents get <id> --prompt-out PROMPT.md`, edit the file, `ghosty agents set <id> --prompt-file PROMPT.md` |
 | "base its prompt on another agent's (a branch, a variant)" | write an overlay `{"edits":[{"what","find","replace","regex"?,"all"?}]}`, `ghosty agents set <id> --prompt-base <base-id> --prompt-overlay overlay.json --dry-run --out /tmp/p.md`, check, then without `--dry-run`. It regenerates when the base changes; its own prompt can't be edited while linked (`--prompt-base none` unlinks) |
 | "give it the CRM / sales tools" | `ghosty agents set <id> --toolsets +crm` (a plain list replaces; `-x` removes) |
@@ -106,7 +110,7 @@ legacy and always `true`.)
 | "which PDF templates does it have?" | `ghosty skills templates <id> --json` → `templates[]` with `source` (`agente:<skill>` or `casa`); its own go in `<skill>/pdf-templates/<name>.html` |
 | "give it this database / what can it write" | `ghosty dbs ls <id>`, `ghosty dbs tables <id> <db>`, `ghosty dbs grant <id> <db> [--external-write t1,t2] [--external-rows t:col+col]` (tables it may write from WhatsApp/Messenger; tables where each customer sees only their own rows, matched by phone column — use it for any customers/orders table) |
 | "copy its data from EasyBits" | `ghosty dbs import <id> <db> --from easybits:<db-id> --dry-run` first (needs `EASYBITS_API_KEY`), show the plan, then run without `--dry-run` (`--yes` if replacing rows) |
-| "let it read / send this document" | `ghosty agents docs ls <id>`, `ghosty agents docs grant <id> "<name>" [--write] [--no-deliver]`; a new one: `ghosty agents docs add <id> --url <url> \| --file <path> [--description T]` (uploads and grants) |
+| "let it read / send this document" | `ghosty agents docs ls <id>`, `ghosty agents docs grant <id> "<name>" [--write] [--no-deliver]`; a new one: `ghosty agents docs add <id> --url <url> \| --file <path> [--description T]` (uploads and grants); several: `grant <id> "A" "B"` or `--like <other-id>` |
 | "answer with voice notes" | `ghosty agents set <id> --voice elevenlabs:<voice-id>\|kokoro:em_santa --voice-replies auto` |
 | "answer in this WhatsApp group / make the group team or customer" | personal WhatsApp only: `ghosty channels wa groups ls <id> --json`, then confirm with the user and `ghosty channels wa groups set <id> "<group>" --role equipo\|cliente --on --yes` (`--dry-run` first) |
 | "move / migrate this WhatsApp number from EasyBits or Formmy" | Business: `ghosty channels whatsapp link <id> --integration <formmy-id> --answer on\|off --dry-run --json` → show `plan`; confirm with the user (on = answers real customers), then without `--dry-run` and `--yes`; back: `unlink`. Its recent cards/messages/orders: `ghosty channels whatsapp history <id> --integration <formmy-id> --days 7 --dry-run`, then without `--dry-run` (`--yes`; re-running never duplicates). Personal: `ghosty channels wa import <id> --from-file F` (EasyBits JSON) or `--from-dir DIR` (Baileys multi-file folder) `--own-number yes\|no --dry-run` (the user turns off EasyBits WITHOUT logout first), then `wa status` |
@@ -141,7 +145,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
-- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups set --on`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
+- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups set --on`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
 
 ## Verify
 
