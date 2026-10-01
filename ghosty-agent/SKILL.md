@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.38"
+  version: "1.39"
 ---
 
 # Configure a Ghosty Studio agent
@@ -129,6 +129,10 @@ legacy and always `true`.)
 | "how much did this workspace use / which agent spends most / messages left without balance" | `ghosty usage --workspace <slug> --by agent,day --days 14 --json` → `rows`, `agents` (turns, failed, billable, noQuota); the unanswered ones: `ghosty turns ls --workspace <slug> --quota-hits --json` (owner or staff) |
 | "give this agent its own token bag / make it one-time" | staff only: `ghosty bags ls <workspace>`, `ghosty bags create <workspace> "<bag>" --tokens 20M [--recurring off]`, `ghosty agents set <id> --bag "<bag>"`; change: `ghosty bags set <workspace> "<bag>" --tokens 30M` |
 | "renew / extend this workspace" or "rename its slug" | staff only: `ghosty spaces renew <workspace> --until YYYY-MM-DD --dry-run`, confirm, then `--yes`; `ghosty spaces rename <old> <new> --dry-run` first |
+| "check X's health / X's app is stuck" (support) | staff only: `ghosty agents doctor --user <email> [agent]` — doctor, latest turns with «fetched» (`never` = their app didn't pick up a finished answer), plan/bag and boxes (duplicates flagged); `ghosty agents ls --user <email> --app android` shows their list and phones with the app build (old build = ask them to update) |
+| "what did this agent run / did it leak anything" (support) | staff only: `ghosty conversations show <agent> <conversation> --tools` — every tool with its command (secrets masked) and the external domains it named; never while a turn runs there. Who sees a thread: `--why`; someone's threads: `ghosty conversations ls --user <email>` |
+| "are images being metered / how much do images cost on Free" | staff only: `ghosty usage --images --plan free --since 7d [--by user]` — charges vs images agents delivered (far more deliveries than charges = the meter isn't reporting) and stored cost vs the table |
+| "did the push reach them / did the announcement go out" | staff only: `ghosty push log --user <email> --since 2d` (announcements show as `novedad`); `ghosty novedades ls` shows delivered/rejected per announcement |
 | "turn this tool off for customers / in WhatsApp" | `ghosty agents get <id> --fields tools --json` → `tools.canales`, then `ghosty agents set <id> --tool wa:<tool>=off` (no channel = everywhere) |
 | "put this face / avatar on the agent" | `ghosty agents set <id> --avatar <https-url or local png/jpg/webp>` → updates every Teams where it's active |
 | "remove this agent from the workspace" | irreversible (memory and files go too): confirm with the user, then `ghosty agents rm <id> --from-workspace --yes` (turns it off in every Teams, then deletes it) |
