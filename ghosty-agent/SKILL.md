@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.36"
+  version: "1.37"
 ---
 
 # Configure a Ghosty Studio agent
@@ -147,7 +147,7 @@ legacy and always `true`.)
 | "how much have I used? / am I out of usage?" | `ghosty usage --json` → `plan.name`, `week.pct` / `month.pct` (0–1), `exhausted` |
 | "let people try it without an account / share a demo" | `ghosty agents demo <id> --slug <name> [--expires "YYYY-MM-DDTHH:MM"] [--welcome T] [--starter T] [--chips "a\|b"] --json` then `ghosty agents demo enable <id>` → `url`; no flags = status; `--rotate` if the link leaked, `--off` to stop |
 | "what files are in my account?" | `ghosty me files ls [--kind document] --json`; `me files upload <path>`, `me files rm <file-id>` |
-| "what do my agents remember about me?" / "make it remember X" | `ghosty me memories ls --json`; `me memories add "X" [--agent <agent>]`, `edit <id> "…"`, `rm <id>` (only travels in personal chats) |
+| "what do my agents remember about me?" / "make it remember X" | `ghosty me memories ls --json`; `me memories add "X"` (app-wide, all agents), `edit <id> "…"`, `rm <id>` (only travels in personal chats) |
 | "clean up the board / archive test cards" | `ghosty cards archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
 | "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
 | "what's in its database? / fix this row" | `ghosty dbs query <id> <db> "SELECT …" [--arg V]… --json` (read only); `--write` only for a change the user asked for |
