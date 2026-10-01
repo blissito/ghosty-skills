@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.32"
+  version: "1.33"
 ---
 
 # Configure a Ghosty Studio agent
@@ -93,7 +93,7 @@ legacy and always `true`.)
 | "share it with / give access to <email>" | `ghosty agents share <id> <email> [--role editor\|admin]` (keeps ownership); `ghosty agents shares <id>` lists; `unshare` needs `--yes` |
 | "turn off / on this skill" | `ghosty skills disable\|enable <id> <slug>` (its own or one of Ghosty's; `skills ls` shows `on`) |
 | "delete this agent" | confirm with the user first, then `ghosty agents rm <id>` (owner only; `409` names the workspace where it is active) |
-| "switch it to another engine" | `ghosty agents set <id> --engine <engine> [--model <model-id>]` (the model belongs to the NEW engine) |
+| "switch it to another engine" | `ghosty agents set <id> --engine <engine> [--model <model-id>] --dry-run` first (says what is forgotten and which machine is replaced; `ok:false` if it is busy), then the same without `--dry-run`. The model belongs to the NEW engine; each conversation keeps its history (gs passes it on its first turn) |
 | "change the model" | `ghosty agents get <id> --json` (lists `models`), then `ghosty agents set <id> --model <model-id>` (restarts by itself) |
 | "make it think more / less" | Ghosty · Lite: `ghosty agents set <id> --env GHOSTY_THINKING_EFFORT=off\|low\|medium\|high\|max`. Codex: `--env FLEET_EFFORT=none\|minimal\|low\|medium\|high\|xhigh\|max` |
 | "give it these files / documents / knowledge" | `ghosty files put <id> <name> --file <local>`, one per file |
