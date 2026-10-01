@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.31"
+  version: "1.32"
 ---
 
 # Configure a Ghosty Studio agent
@@ -106,6 +106,8 @@ legacy and always `true`.)
 | "show me this customer's chat on the board / did the attachment arrive?" | `ghosty cards ls <id> [--q name-or-phone] --json`, then `ghosty cards show <id> <folio\|phone> [--limit 50] --json` → `messages[]` with `role`, `content`, `mediaType`, `mediaCopied` |
 | "replay these real conversations" | `ghosty try <id> --replay sample.json --out ./replay [--max N]`; read `./replay/replay.json`; `--resume` if it was cut |
 | "is it configured right? / why does it answer badly?" | `ghosty agents doctor <id> --json` → `checks[]` with `level` (ok/warn/error) and a `fix` command each; exit 1 = something to fix |
+| "did it forget the conversation? / did it start from scratch?" | `ghosty turns ls <id> --session <conversation> --json` → each turn's `sdk.resumed` (false + `freshReason` orphan/stale/replaced = it lost its memory; `new` = first turn). Claude agents only |
+| "try my public demo as a visitor / does it remember after a box change?" | `ghosty demos try <slug> "…"` (same thread across runs; `--new` for a new visitor); memory across boxes: second message with `--recycle-between --agent <id>`. It counts against the demo's caps |
 | "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error`; a WhatsApp customer got NO turn at all: `ghosty turns ls <id> --skipped --since 24h --json` → `reason` (manual_mode, records_only, paused, reaction, channel_off, no_quota) |
 | "what did it answer to that? / audit a reply" | `ghosty turns show <id> [turn-id] --json` → `input` (what came in) and `output` (what it answered), any engine or channel |
 | "why was it slow? / where did the time go?" | `ghosty turns show <id> [turn-id] --json` → `byTool` (seconds per tool), `steps` (timeline), `totals.outputTokens`; pool engines only (`timeline: false` otherwise) |
@@ -141,7 +143,8 @@ legacy and always `true`.)
 | "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
 | "what's in its database? / fix this row" | `ghosty dbs query <id> <db> "SELECT …" [--arg V]… --json` (read only); `--write` only for a change the user asked for |
 | "stop giving it this database" | `ghosty dbs revoke <id> <db>` (prints the `grant` that undoes it) |
-| "give an agent to each of MY customers (partner)" | not for a normal owner: see https://www.ghosty.studio/docs/cli/partners.md (`ghosty partner --help`) |
+| "give an agent to each of MY customers (partner)" | not for a normal owner: see https://www.ghosty.studio/docs/cli/partners.md (`ghosty partner --help`). Issue a credential without printing it: `ghosty partner credentials create --label prod --env-file .env.partner`; debug tools: `ghosty partner try <org> "…" --verbose` |
+| "work in my client's account / workspace" | `ghosty login --device --profile <client>`: give the client the printed link and code to approve; then add `--profile <client>` to every command (`ghosty logout --profile <client>` revokes it) |
 | "have it speak in this Teams room / thread at 9" | `ghosty schedule add <id> "…" --teams <workspace>#<room>[/<thread-message-id>] --at ISO \| --in 30m` → it answers there as if mentioned; `ghosty schedule ls\|rm <id> [sched-id] --teams <workspace>` |
 | "have it do X every day / at 9 / remind me" | `ghosty schedule add <id> "…" --at ISO \| --in 30m [--every 12h --until ISO] [--title T]`; each run notifies the user's phone, an answer of exactly `OK` stays silent. `ghosty schedule ls|rm <id>` |
 
