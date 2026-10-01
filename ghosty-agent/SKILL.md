@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.41"
+  version: "1.42"
 ---
 
 # Configure a Ghosty Studio agent
@@ -157,7 +157,7 @@ legacy and always `true`.)
 | "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
 | "what's in its database? / fix this row" | `ghosty dbs query <id> <db> "SELECT …" [--arg V]… --json` (read only); `--write` only for a change the user asked for |
 | "stop giving it this database" | `ghosty dbs revoke <id> <db>` (prints the `grant` that undoes it) |
-| "give an agent to each of MY customers (partner)" | not for a normal owner: see https://www.ghosty.studio/docs/cli/partners.md (`ghosty partner --help`). Issue a credential without printing it: `ghosty partner credentials create --label prod --env-file .env.partner`; debug tools: `ghosty partner try <org> "…" --verbose`; several agents per partner: `--agent <slug>` on `partner agent get|apply` and `partner try`; a business's WhatsApp number: `channels whatsapp link <partner-agent-id> … --partner-tenant <org> --partner-agent <slug>`; WhatsApp groups of a partner agent: `ghosty partner wa groups ls|link <jid> --tenant <org> --agent <slug>|create|unlink` |
+| "give an agent to each of MY customers (partner)" | not for a normal owner: see https://www.ghosty.studio/docs/cli/partners.md (`ghosty partner --help`). Issue a credential without printing it: `ghosty partner credentials create --label prod --env-file .env.partner`; debug tools: `ghosty partner try <org> "…" --verbose`; several agents per partner: `--agent <slug>` on `partner agent get|apply` and `partner try`; a business's WhatsApp number: `channels whatsapp link <partner-agent-id> … --partner-tenant <org> --partner-agent <slug>`; WhatsApp groups of a partner agent: `ghosty partner wa groups ls|link <jid> --tenant <org> --agent <slug>|create|unlink`; a business's WABA number registered by the partner in Formmy: `ghosty partner waba links create --tenant <org> --agent nik-public` (url + secret for Formmy) then `set <id> --integration <formmy-id> --on` |
 | "work in my client's account / workspace" | `ghosty login --device --profile <client>`: give the client the printed link and code to approve; then add `--profile <client>` to every command (`ghosty logout --profile <client>` revokes it) |
 | "have it speak in this Teams room / thread at 9" | `ghosty schedule add <id> "…" --teams <workspace>#<room>[/<thread-message-id>] --at ISO \| --in 30m` → it answers there as if mentioned; `ghosty schedule ls\|rm <id> [sched-id] --teams <workspace>` |
 | "have it do X every day / at 9 / remind me" | `ghosty schedule add <id> "…" --at ISO \| --in 30m [--every 12h --until ISO] [--title T]`; each run notifies the user's phone, an answer of exactly `OK` stays silent. `ghosty schedule ls|rm <id>` |
