@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.34"
+  version: "1.35"
 ---
 
 # Configure a Ghosty Studio agent
@@ -114,6 +114,8 @@ legacy and always `true`.)
 | "clean up its history / delete the test chats" | `ghosty conversations rm <id> --kind test --before 7d --dry-run`, confirm, then without `--dry-run` (`--yes`); customer threads: `conversations archive <id> --kind channel` (never rm) |
 | "merge my duplicated documents" | `ghosty agents docs dedupe --dry-run`, show the merges, then `--yes`; two specific ones: `ghosty agents docs dedupe <keep-id> <drop-id>` |
 | "use this file from my files in the chat" | `ghosty me files ls --q <name> --json` → id, then `ghosty chat <id> "…" --file <file-id>` |
+| "which workspaces do I have / where is X's workspace" | `ghosty spaces ls [--user <email>] --json` (others: staff) |
+| "bring only the ad leads from this number" | `ghosty channels whatsapp history <id> --integration <formmy-id> --dry-run --list --only-ads` → show which, then without `--dry-run` (`--yes`); new numbers: `channels whatsapp link … --ads-only on` |
 | "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error`; a WhatsApp customer got NO turn at all: `ghosty turns ls <id> --skipped --since 24h --json` → `reason` (manual_mode, records_only, paused, reaction, channel_off, no_quota) |
 | "what did it answer to that? / audit a reply" | `ghosty turns show <id> [turn-id] --json` → `input` (what came in) and `output` (what it answered), any engine or channel |
 | "why was it slow? / where did the time go?" | `ghosty turns show <id> [turn-id] --json` → `byTool` (seconds per tool), `steps` (timeline), `totals.outputTokens`; pool engines only (`timeline: false` otherwise) |
