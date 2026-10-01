@@ -81,8 +81,17 @@ curl -s "$B/bundle" -H "Authorization: Bearer $GHOSTY_AGENT_TOKEN" > agent.json
 ## PATCH / — connectors
 `{ "connectors": { "google-drive": {} } }` grants the agent access to that account connector; `null` removes it. Drive also takes `files` (ids) and `clientWrite`. Owner only: `403` with a `gat_` token.
 
+## PATCH / — tools per channel, bag
+`{ "tools": { "canales": { "wa": { "actualizar_identidad": false } }, "gs": { "crm_buscar": false } } }` turns a tool off in one channel or everywhere (`true` turns it back on). `{ "bag": "MiniGhosty" | null }` = which token bag of its workspace it spends from; goes alone, Ghosty staff only.
+
+## PUT /avatar
+Raw image (`content-type: image/png|jpeg|webp`, ≤ 10 MB) or `{ "url": "https://…" }`. Stored at `img.ghosty.studio`, and written to every Teams where the agent is active. → `{ avatar, workspaces[] }`. Not with a `gat_` token.
+
 ## DELETE /
-Deletes the agent and its machines. Owner only (`403` for an editor or a `gat_` token); `409` if a workspace has it active (the message names it). → `{ deleted: id }`.
+Deletes the agent and its machines. Owner only (`403` for an editor or a `gat_` token); `409` if a workspace has it active (the message names it). `?fromWorkspace=1` turns it off in every Teams first, then deletes (owner or Ghosty staff). → `{ deleted: id, unbound?: [slug] }`.
+
+## Workspace (not under /agents/{id})
+`GET /api/v2/engines` → valid engines and models. `GET /api/v2/workspaces/{slug}/usage?days=14` → turns, tokens and no-balance messages per agent/day (owner or staff). `GET|POST /api/v2/workspaces/{slug}/bags`, `PATCH|DELETE …/bags/{bag}` (writes: staff). `POST /api/v2/workspaces/{slug}/renew {until}` and `…/rename {to}` (staff; `dryRun: true` first).
 
 ## POST /restart
 → `{ reiniciado: true }`. Cuts a running turn; disk survives. Only with `needsRestart: true`;

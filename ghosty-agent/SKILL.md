@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.29"
+  version: "1.30"
 ---
 
 # Configure a Ghosty Studio agent
@@ -115,6 +115,13 @@ legacy and always `true`.)
 | "are the catalog photos permanent? / photos stopped showing on WhatsApp" | `ghosty dbs tables <id> <db>` → per photo column permanent · external · empty; external ones: `ghosty dbs rehost <id> <db> --table T --column C` |
 | "here are the photos the customer sent" (a folder named by SKU) | `ghosty dbs photos put <id> <db> --table catalogo --key-column sku --dir <folder> --dry-run`, show which SKUs have no row, then without `--dry-run` |
 | "remove these env variables" | `ghosty agents set <id> --unset-env K1,K2` |
+| "which models can it use? / is this model valid?" | `ghosty engines ls --models --json` → `engines[].models[]` (`id`, `multiplier`, `ownKeyOnly`); an invalid `--model` is rejected with the valid list |
+| "how much did this workspace use / which agent spends most / messages left without balance" | `ghosty usage --workspace <slug> --by agent,day --days 14 --json` → `rows`, `agents` (turns, failed, billable, noQuota); the unanswered ones: `ghosty turns ls --workspace <slug> --quota-hits --json` (owner or staff) |
+| "give this agent its own token bag / make it one-time" | staff only: `ghosty bags ls <workspace>`, `ghosty bags create <workspace> "<bag>" --tokens 20M [--recurring off]`, `ghosty agents set <id> --bag "<bag>"`; change: `ghosty bags set <workspace> "<bag>" --tokens 30M` |
+| "renew / extend this workspace" or "rename its slug" | staff only: `ghosty spaces renew <workspace> --until YYYY-MM-DD --dry-run`, confirm, then `--yes`; `ghosty spaces rename <old> <new> --dry-run` first |
+| "turn this tool off for customers / in WhatsApp" | `ghosty agents get <id> --fields tools --json` → `tools.canales`, then `ghosty agents set <id> --tool wa:<tool>=off` (no channel = everywhere) |
+| "put this face / avatar on the agent" | `ghosty agents set <id> --avatar <https-url or local png/jpg/webp>` → updates every Teams where it's active |
+| "remove this agent from the workspace" | irreversible (memory and files go too): confirm with the user, then `ghosty agents rm <id> --from-workspace --yes` (turns it off in every Teams, then deletes it) |
 | "how many boxes / how much capacity does it have?" | `ghosty agents box <id> --json` → `capacity`; per workspace: `ghosty usage --boxes --workspace <slug> --json` |
 | "apply the new plan now" | `ghosty plan apply <workspace> --dry-run`, show the changes and monthly total, confirm, then without `--dry-run` (`--yes`) |
 | "copy its data from EasyBits" | `ghosty dbs import <id> <db> --from easybits:<db-id> --dry-run` first (needs `EASYBITS_API_KEY`), show the plan (and `gsOnly`: rows written in gs that replacing would delete — then use `--tables` or `--append`), then run without `--dry-run` (`--yes` if replacing rows) |
