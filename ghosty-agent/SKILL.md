@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.37"
+  version: "1.38"
 ---
 
 # Configure a Ghosty Studio agent
@@ -139,7 +139,7 @@ legacy and always `true`.)
 | "let it read / send this document" | `ghosty agents docs ls <id>`, `ghosty agents docs grant <id> "<name>" [--write] [--no-deliver]`; a new one: `ghosty agents docs add <id> --url <url> \| --file <path> [--description T]` (uploads and grants); several: `grant <id> "A" "B"` or `--like <other-id>` |
 | "update / replace the catalog (or any document)", "go back to the previous one" | `ghosty agents docs replace <id> "<name>" --file <path> \| --url <url> [--note T]` — a NEW VERSION of the same document: keeps its name, access and every agent that uses it (never `add` a second copy: prompts name it and the other agents would keep the old one). `ghosty agents docs history <id> "<name>"` shows versions and who uses it; `ghosty agents docs restore <id> "<name>" <n>` |
 | "answer with voice notes" | `ghosty agents set <id> --voice elevenlabs:<voice-id>\|kokoro:em_santa --voice-replies auto` |
-| "answer in this WhatsApp group / make the group team or customer" | personal WhatsApp only: `ghosty channels wa groups ls <id> --json`, then confirm with the user and `ghosty channels wa groups enable <id> "<group>" --role equipo\|cliente --yes` (`--dry-run` first) |
+| "answer in this WhatsApp group / make the group team or customer" | personal WhatsApp only: `ghosty channels wa groups ls <id> --json`, then confirm with the user and `ghosty channels wa groups enable <id> "<group>" --role equipo\|cliente --yes` (`--dry-run` first); a newly enabled group only answers when mentioned — `--wake all` to answer every message |
 | "move / migrate this WhatsApp number from EasyBits or Formmy" | Business: find its Integration id and who answers it today with `ghosty channels whatsapp integrations <id> --json`, then `ghosty channels whatsapp link <id> --integration <formmy-id> --answer on\|off --dry-run --json` → show `plan`; confirm with the user (on = answers real customers), then without `--dry-run` and `--yes`; back: `unlink`. Its recent cards/messages/orders: `ghosty channels whatsapp history <id> --integration <formmy-id> --days 7 --dry-run` (works before linking), then without `--dry-run` (`--yes`; re-running never duplicates; it retries by itself during a deploy). It reports conversations that arrive paused by Formmy: list them with `ghosty cards ls <id> --paused --limit 200` and tell the user the agent won't answer those until they're resumed. Personal: `ghosty channels wa import <id> --from easybits:<agent-id> --own-number yes\|no --dry-run` (needs `EASYBITS_API_KEY`; prints whether the origin session is alive — if not, pair again instead), or `--from-file F` (EasyBits JSON) or `--from-dir DIR` (Baileys multi-file folder) `--own-number yes\|no --dry-run` (the user turns off EasyBits WITHOUT logout first), then `wa status` |
 | "answer this WhatsApp number" | confirm with the user (real customers), then `ghosty channels whatsapp enable <id> <number> --yes`; `--dry-run` shows the plan |
 | "save my ElevenLabs / MercadoPago key" | never put the key in a command: ask the user to run `ghosty credentials set <provider>` themselves (hidden prompt), or use `--from-env VAR` |
