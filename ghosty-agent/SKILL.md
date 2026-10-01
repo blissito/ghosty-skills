@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.40"
+  version: "1.41"
 ---
 
 # Configure a Ghosty Studio agent
@@ -98,7 +98,7 @@ legacy and always `true`.)
 | "make it think more / less" | Ghosty · Lite: `ghosty agents set <id> --env GHOSTY_THINKING_EFFORT=off\|low\|medium\|high\|max`. Codex: `--env FLEET_EFFORT=none\|minimal\|low\|medium\|high\|xhigh\|max` |
 | "give it these files / documents / knowledge" | `ghosty files put <id> <name> --file <local>`, one per file |
 | "install / teach it a skill" | `ghosty skills add <id> <slug> --file SKILL.md` (or just `<slug>` from the catalog: `ghosty skills ls <id>`), then `ghosty agents restart <id>` only if `needsRestart` |
-| "connect it to this MCP server" | `ghosty mcp get <id> --json > servers.json`, add the server, `ghosty mcp set <id> --file servers.json` (replaces; restarts by itself) |
+| "connect it to this MCP server" | `ghosty mcp get <id> --json > servers.json`, add the server, `ghosty mcp set <id> --file servers.json` (replaces; restarts by itself). One key per end user of another product: header `"Authorization": "Bearer ${turn.token}"` (http only, not ACP); each `message-stream` turn then needs `turnToken` |
 | "what does it have?" | `ghosty agents get <id> --json` → prompt, model, files, skills, mcp |
 | "does it work? / test it" | `ghosty try <id> "…" --json` → the agent's answer (see Verify) |
 | "talk to it / ask it something" | `ghosty chat <id> "…" --json` → streams `chunk` lines, ends with `done` |
@@ -115,6 +115,7 @@ legacy and always `true`.)
 | "merge my duplicated documents" | `ghosty agents docs dedupe --dry-run`, show the merges, then `--yes`; two specific ones: `ghosty agents docs dedupe <keep-id> <drop-id>` |
 | "use this file from my files in the chat" | `ghosty me files ls --q <name> --json` → id, then `ghosty chat <id> "…" --file <file-id>` |
 | "which workspaces do I have / where is X's workspace" | `ghosty spaces ls [--user <email>] --json` (others: staff) |
+| "create a workspace" | `ghosty spaces create <slug> --dry-run`, then without `--dry-run` (yours, trial; same rules as the web: confirmed email, plan cap). `--combo` other than teams: staff |
 | "bring only the ad leads from this number" | `ghosty channels whatsapp history <id> --integration <formmy-id> --dry-run --list --only-ads` → show which, then without `--dry-run` (`--yes`); new numbers: `channels whatsapp link … --ads-only on` |
 | "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error`; a WhatsApp customer got NO turn at all: `ghosty turns ls <id> --skipped --since 24h --json` → `reason` (manual_mode, records_only, paused, reaction, channel_off, no_quota) |
 | "what did it answer to that? / audit a reply" | `ghosty turns show <id> [turn-id] --json` → `input` (what came in) and `output` (what it answered), any engine or channel |
