@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.44"
+  version: "1.45"
 ---
 
 # Configure a Ghosty Studio agent
@@ -136,6 +136,7 @@ legacy and always `true`.)
 | "what did this agent run / did it leak anything" (support) | staff only: `ghosty conversations show <agent> <conversation> --tools` — every tool with its command (secrets masked) and the external domains it named; never while a turn runs there. Who sees a thread: `--why`; someone's threads: `ghosty conversations ls --user <email>` |
 | "are images being metered / how much do images cost on Free" | staff only: `ghosty usage --images --plan free --since 7d [--by user]` — charges vs images agents delivered (far more deliveries than charges = the meter isn't reporting) and stored cost vs the table |
 | "did the push reach them / did the announcement go out" | staff only: `ghosty push log --user <email> --since 2d` (announcements show as `novedad`); `ghosty novedades ls` shows delivered/rejected per announcement |
+| "publish this demo / landing as a Ghosty site", "change its URL / slug" | staff only: `ghosty sites publish <file.html|folder> --title T [--slug S]` (house site on EasyBits: no owner, no expiry, no banner); update it with `--site <slug>` (without it a NEW site is created); `ghosty sites slug <slug> <new-slug>`; `ghosty sites ls --house`. Exit 1 with `slug_unsupported` = EasyBits does not accept a slug yet: say so, don't retry |
 | "turn this tool off for customers / in WhatsApp" | `ghosty agents get <id> --fields tools --json` → `tools.canales`, then `ghosty agents set <id> --tool wa:<tool>=off` (no channel = everywhere) |
 | "put this face / avatar on the agent" | `ghosty agents set <id> --avatar <https-url or local png/jpg/webp>` → updates every Teams where it's active |
 | "remove this agent from the workspace" | irreversible (memory and files go too): confirm with the user, then `ghosty agents rm <id> --from-workspace --yes` (turns it off in every Teams, then deletes it) |
