@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.43"
+  version: "1.44"
 ---
 
 # Configure a Ghosty Studio agent
@@ -131,6 +131,7 @@ legacy and always `true`.)
 | "how much did this workspace use / which agent spends most / messages left without balance" | `ghosty usage --workspace <slug> --by agent,day --days 14 --json` → `rows`, `agents` (turns, failed, billable, noQuota); the unanswered ones: `ghosty turns ls --workspace <slug> --quota-hits --json` (owner or staff) |
 | "give this agent its own token bag / make it one-time" | staff only: `ghosty bags ls <workspace>`, `ghosty bags create <workspace> "<bag>" --tokens 20M [--recurring off]`, `ghosty agents set <id> --bag "<bag>"`; change: `ghosty bags set <workspace> "<bag>" --tokens 30M` |
 | "renew / extend this workspace" or "rename its slug" | staff only: `ghosty spaces renew <workspace> --until YYYY-MM-DD --dry-run`, confirm, then `--yes`; `ghosty spaces rename <old> <new> --dry-run` first |
+| "make X the owner of this workspace / hand it over to the client" | staff only: `ghosty spaces transfer <workspace> --to <email> --keep-as admin --copy-keys --dry-run --json` → `keys.missing` (agents without a key stop answering) and `warnings`; confirm with the user, then without `--dry-run` plus `--yes`. Agents and their boxes go with it |
 | "check X's health / X's app is stuck" (support) | staff only: `ghosty agents doctor --user <email> [agent]` — doctor, latest turns with «fetched» (`never` = their app didn't pick up a finished answer), plan/bag and boxes (duplicates flagged); `ghosty agents ls --user <email> --app android` shows their list and phones with the app build (old build = ask them to update) |
 | "what did this agent run / did it leak anything" (support) | staff only: `ghosty conversations show <agent> <conversation> --tools` — every tool with its command (secrets masked) and the external domains it named; never while a turn runs there. Who sees a thread: `--why`; someone's threads: `ghosty conversations ls --user <email>` |
 | "are images being metered / how much do images cost on Free" | staff only: `ghosty usage --images --plan free --since 7d [--by user]` — charges vs images agents delivered (far more deliveries than charges = the meter isn't reporting) and stored cost vs the table |
