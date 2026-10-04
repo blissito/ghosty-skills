@@ -1,11 +1,11 @@
 ---
 name: ghosty-browser
-description: Drive the user's own Chrome (with the sessions they already have open) from a coding agent or script through the Ghosty for Chrome extension and the Ghosty Studio HTTP API (/api/browser/call with a personal bt_ token). Use when the user wants their Ghosty agent or Claude Code to act in their logged-in browser, mentions Ghosty for Chrome, browser_* tools, ghosty.studio/chrome, or a bt_ token.
+description: Drive the user's own Chrome (with the sessions they already have open) from a coding agent (Claude Code, Cursor, Codex) or script through the Ghosty for Chrome extension — with the @ghostystudio/browser-mcp MCP server (local native bridge, no token) or the Ghosty Studio HTTP API (/api/browser/call with a personal bt_ token). Use when the user wants their Ghosty agent or Claude Code to act in their logged-in browser, mentions Ghosty for Chrome, browser_* tools, ghosty.studio/chrome, or a bt_ token.
 license: MIT
 compatibility: Needs curl or Node 18+, network access to https://www.ghosty.studio, and Chrome with the Ghosty extension signed in to ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Use the person's Chrome through Ghosty
@@ -32,7 +32,21 @@ tools in **personal chats and scheduled tasks** (never in customer channels like
 Messenger or embed). Ask in plain language: "Open my Shopify dashboard and list today's pending
 orders". Saved shortcuts: "save this as shortcut /prices: …", then `/prices`.
 
-## From Claude Code, a script or your own MCP server
+## From Claude Code, Cursor or Codex (MCP server)
+
+`@ghostystudio/browser-mcp` exposes every tool as `browser_*`.
+
+```bash
+npx -y @ghostystudio/browser-mcp install-host   # once, on the computer where Chrome runs (no token)
+claude mcp add ghosty-browser -- npx -y @ghostystudio/browser-mcp
+codex mcp add ghosty-browser -- npx -y @ghostystudio/browser-mcp
+# Cursor: ~/.cursor/mcp.json → {"mcpServers":{"ghosty-browser":{"command":"npx","args":["-y","@ghostystudio/browser-mcp"]}}}
+```
+
+After `install-host` the user reloads the extension (`chrome://extensions` → ↻). `browser_status` shows
+`localBridge: true`. For Chrome on another machine, set `GS_BROWSER_TOKEN` (remote path, below).
+
+## From a script or your own server (HTTP)
 
 1. **Token**: the extension panel shows a personal `bt_…` token (from `GET /api/browser/token`
    with the web session). It lasts 30 days and only reaches that person's browser. Ask the user
@@ -76,6 +90,14 @@ OpenAPI: https://www.ghosty.studio/openapi.yaml (tag *Navegador*).
 | Debug the user's site | `console_messages`, `network_requests` |
 | Record what you did | `gif_creator` (`start_recording` → … → `stop_recording` → `export`) |
 
+- **Parallel work: always pass `tabId`.** `tabs {action:"new", url, background:true}` returns a
+  `tabId`; pass it to every call of that task. Two agents/subagents (say, YouTube and TikTok) then
+  run at once without stepping on each other or stealing the visible tab. Answers start with `[tab N]`.
+- **Uploads**: `read_page` ends with "Subir archivos" listing every `<input type=file>` (also the
+  HIDDEN ones behind a button) with a `ref`; pass it as `target` to `file_upload` with absolute paths.
+- **Accounts/channels**: switch with the page's own account picker (avatar → "Switch account"; on
+  Google also `?authuser=N` or accounts.google.com/AccountChooser). Never type passwords.
+- Every tool has a hard timeout: a stuck call returns an error instead of blocking the next ones.
 - **Refs go stale.** After a navigation or a re-render, call `read_page` or `find` again before
   the next click. Never guess a ref.
 - The agent only sees the tabs in the **"Ghosty"** tab group; leave the user's other tabs alone.
