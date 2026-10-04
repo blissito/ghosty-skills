@@ -16,6 +16,7 @@ npx skills add https://ghosty.studio
 | `ghosty-acp` | connect Zed, VS Code, JetBrains or Neovim to the agent over ACP |
 | `ghosty-recipe` | write or review an agent recipe (`.recipe.yaml`) to upload in the creator |
 | `ghosty-factory` | prepare a repo for the Ghosty Software Factory: `AGENTS.md`, the `docs/agents/` knowledge base, `.ghosty/factory.md` (agent and model per role) |
+| `ghosty-browser` | drive the user's own Chrome (their open sessions) through the Ghosty for Chrome extension: setup, the `bt_` token, `/api/browser/call` and how to click without stale refs |
 
 This directory is mirrored from `public/skills/` in
 [blissito/ghosty-studio](https://github.com/blissito/ghosty-studio). Docs: https://www.ghosty.studio/docs/configurar
