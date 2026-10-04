@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.47"
+  version: "1.48"
 ---
 
 # Configure a Ghosty Studio agent
@@ -156,6 +156,7 @@ legacy and always `true`.)
 | "how much have I used? / am I out of usage?" | `ghosty usage --json` → `plan.name`, `week.pct` / `month.pct` (0–1), `exhausted` |
 | "let people try it without an account / share a demo" | `ghosty agents demo <id> --slug <name> [--expires "YYYY-MM-DDTHH:MM"] [--welcome T] [--starter T] [--chips "a\|b"] --json` then `ghosty agents demo enable <id>` → `url`; no flags = status; `--rotate` if the link leaked, `--off` to stop |
 | "what files are in my account?" | `ghosty me files ls [--kind document] --json`; `me files upload <path>`, `me files rm <file-id>` |
+| "use my browser / do it in my Chrome" | install Ghosty for Chrome (https://www.ghosty.studio/chrome), stay signed in to ghosty.studio and open /c: it pairs alone. In personal chats and scheduled tasks the agent gets `browser_*` tools (never in customer channels); never types passwords. Guide: https://www.ghosty.studio/docs/navegador |
 | "what do my agents remember about me?" / "make it remember X" | `ghosty me memories ls --json`; `me memories add "X"` (app-wide, all agents), `edit <id> "…"`, `rm <id>` (only travels in personal chats) |
 | "clean up the board / archive test cards" | `ghosty cards archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
 | "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
