@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.46"
+  version: "1.47"
 ---
 
 # Configure a Ghosty Studio agent
@@ -91,7 +91,7 @@ legacy and always `true`.)
 | "base its prompt on another agent's (a branch, a variant)" | write an overlay `{"edits":[{"what","find","replace","regex"?,"all"?}]}`, `ghosty agents set <id> --prompt-base <base-id> --prompt-overlay overlay.json --dry-run --out /tmp/p.md`, check, then without `--dry-run`. It regenerates when the base changes; its own prompt can't be edited while linked (`--prompt-base none` unlinks) |
 | "give it the CRM / sales tools" | `ghosty agents set <id> --toolsets +crm` (a plain list replaces; `-x` removes) |
 | "share it with / give access to <email>" | `ghosty agents share <id> <email> [--role editor\|admin]` (keeps ownership); `ghosty agents shares <id>` lists; `unshare` needs `--yes` |
-| "put it in my Teams workspace", "activate it in Teams as @x", "change its handle", "take it out of Teams" | `ghosty agents teams ls <id>` (workspaces you administer: where it answers, with which @handle), `ghosty agents teams on <id> <workspace> [--handle x]` (on an active one it changes the handle; `@ghosty` is reserved), `ghosty agents teams off <id> <workspace>` (the agent stays). In the UI: agent page → Channels → Ghosty Teams |
+| "put it in my Teams workspace", "activate it in Teams as @x", "change its handle", "take it out of Teams" | `ghosty agents teams ls <id>` (workspaces you administer: where it answers, with which @handle), `ghosty agents teams on <id> <workspace> [--handle x]` (on an active one it changes the handle; `@ghosty` is reserved), `ghosty agents teams off <id> <workspace>` (pauses it; keeps the @handle), `ghosty agents teams rm <id> <workspace> --yes` (removes it, frees the handle; the agent stays). In the UI: agent page → Channels → Ghosty Teams |
 | "turn off / on this skill" | `ghosty skills disable\|enable <id> <slug>` (its own or one of Ghosty's; `skills ls` shows `on`) |
 | "delete this agent" | confirm with the user first, then `ghosty agents rm <id>` (owner only; `409` names the workspace where it is active) |
 | "switch it to another engine" | `ghosty agents set <id> --engine <engine> [--model <model-id>] --dry-run` first (says what is forgotten and which machine is replaced; `ok:false` if it is busy), then the same without `--dry-run`. The model belongs to the NEW engine; each conversation keeps its history (gs passes it on its first turn) |
