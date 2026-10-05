@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.48"
+  version: "1.49"
 ---
 
 # Configure a Ghosty Studio agent
@@ -81,6 +81,8 @@ legacy and always `true`.)
 | any command that takes `<id>` | an agent's name works too (`ghosty agents get pia-0`); if the CLI says several share the name, use the id it lists. `ghosty use <workspace>` sets a default workspace (boards, create, ls) |
 | "create a new agent" | `ghosty agents create --name <name> [--engine <engine>] [--model <model-id>] [--prompt-file PROMPT.md] [--env K=V,…] [--workspace <slug>] [--channels teams=off] --json` → `id`. A model outside the engine answers 400 with the valid list. `--workspace` = born in that workspace, owned by its owner, active in its Teams |
 | "set its identity / persona / system prompt" | write it with `references/identity.md` to a file, `ghosty agents set <id> --prompt-file PROMPT.md`, then `ghosty agents restart <id>` only if `needsRestart` |
+| "what can I connect?", "connect my Shopify / Stripe / monday…" | `ghosty connectors ls [--q text]` shows connected / available; `ghosty connectors connect <id>` opens the browser for OAuth (give the user the printed URL if you can't open it; `--no-open`) or asks for the key fields (never pass keys as arguments: `--from-env VAR` or stdin). Then `ghosty agents set <agent> --connect <id>` |
+| "disconnect my <connector>" | `ghosty connectors disconnect <id>` (confirms; `--yes` only if the user already said so). It revokes at the provider; if it couldn't, show the `aviso` |
 | "let it see my Drive / use my connector" | `ghosty agents set <id> --connect google-drive` (owner only; the account must have it connected first). Files are the ones the owner picked in Conectores → Google Drive |
 | "save / version this agent as a file", "change several settings at once" | `ghosty agents export <id> --out ./<name>` (agent.yaml + skills), edit the YAML, `ghosty apply ./<name> --dry-run`, show the plan (`+ ~ - !`), then `ghosty apply ./<name> --yes`. `--prune` only if the user wants removals; secrets stay as `${NAME}` unless set in the env |
 | "make an agent like <other> / same setup as" | `ghosty agents create --name <n> --like <other-id> --dry-run` (lists what it copies: skills, toolsets, connectors, voice, databases, documents, board, shares — never prompt, env or channels), then without `--dry-run`, then give it its own prompt. `--board new` gives it its own board (source's columns), `--no-notify` shares without emailing people — ask the user which they want |
