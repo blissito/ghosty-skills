@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.49"
+  version: "1.50"
 ---
 
 # Configure a Ghosty Studio agent
@@ -123,6 +123,8 @@ legacy and always `true`.)
 | "bring only the ad leads from this number" | `ghosty channels whatsapp history <id> --integration <formmy-id> --dry-run --list --only-ads` → show which, then without `--dry-run` (`--yes`); new numbers: `channels whatsapp link … --ads-only on` |
 | "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error`; a WhatsApp customer got NO turn at all: `ghosty turns ls <id> --skipped --since 24h --json` → `reason` (manual_mode, records_only, paused, reaction, channel_off, no_quota) |
 | "what did it answer to that? / audit a reply" | `ghosty turns show <id> [turn-id] --json` → `input` (what came in) and `output` (what it answered), any engine or channel |
+| "where did it say X? / find the turn where it quoted…" | `ghosty turns grep <id> "text" --since 7d [--role user\|agent] --json` → `matches[]` with `turnId` and `snippet`; then `turns show <id> <turnId>`. Text only, not tools |
+| "set the quote issuer / VAT / folio prefix" (house `cotizar` tool) | `ghosty agents set <id> --quote iva=0,prefix=SFI,vigencia=15` (empty value clears: `rfc=`); `ghosty agents get <id> --fields cotizacion` to read it. An own skill named `cotizar` already turns the house tool off |
 | "why was it slow? / where did the time go?" | `ghosty turns show <id> [turn-id] --json` → `byTool` (seconds per tool), `steps` (timeline), `totals.outputTokens`; pool engines only (`timeline: false` otherwise) |
 | "is it running the new image? / it still behaves old" | `ghosty agents box <id> --check <path-the-new-image-brings> --json` → `stale`; if > 0, `ghosty agents box <id> --recycle`, one turn, check again (ACP: `agents restart`) |
 | "which PDF templates does it have?" | `ghosty skills templates <id> --json` → `templates[]` with `source` (`agente:<skill>` or `casa`); its own go in `<skill>/pdf-templates/<name>.html` |
@@ -134,7 +136,8 @@ legacy and always `true`.)
 | "how much did this workspace use / which agent spends most / messages left without balance" | `ghosty usage --workspace <slug> --by agent,day --days 14 --json` → `rows`, `agents` (turns, failed, billable, noQuota); the unanswered ones: `ghosty turns ls --workspace <slug> --quota-hits --json` (owner or staff) |
 | "give this agent its own token bag / make it one-time" | staff only: `ghosty bags ls <workspace>`, `ghosty bags create <workspace> "<bag>" --tokens 20M [--recurring off]`, `ghosty agents set <id> --bag "<bag>"`; change: `ghosty bags set <workspace> "<bag>" --tokens 30M` |
 | "renew / extend this workspace" or "rename its slug" | staff only: `ghosty spaces renew <workspace> --until YYYY-MM-DD --dry-run`, confirm, then `--yes`; `ghosty spaces rename <old> <new> --dry-run` first |
-| "make X the owner of this workspace / hand it over to the client" | staff only: `ghosty spaces transfer <workspace> --to <email> --keep-as admin --copy-keys --dry-run --json` → `keys.missing` (agents without a key stop answering) and `warnings`; confirm with the user, then without `--dry-run` plus `--yes`. Agents and their boxes go with it |
+| "make X the owner of this workspace / hand it over to the client" | staff only: `ghosty spaces transfer <workspace> --to <email> --keep-as admin --copy-keys --dry-run --json` → `keys.missing` (agents without a key stop answering) and `warnings`; confirm with the user, then without `--dry-run` plus `--yes`. Only the owner changes: agents, skills and history stay; documents, databases, boards and numbers its agents use move (`resources`); anything also used outside stays and shows in `warnings`. `--copy-keys` also copies the connectors (MercadoPago, Skydropx…) it lacks |
+| "who changed this workspace? / when was it transferred?" | `ghosty spaces log <workspace> --since 30d --json` (owner or staff) → `events[]` with `actor`, `action`, `detail` |
 | "check X's health / X's app is stuck" (support) | staff only: `ghosty agents doctor --user <email> [agent]` — doctor, latest turns with «fetched» (`never` = their app didn't pick up a finished answer), plan/bag and boxes (duplicates flagged); `ghosty agents ls --user <email> --app android` shows their list and phones with the app build (old build = ask them to update) |
 | "what did this agent run / did it leak anything" (support) | staff only: `ghosty conversations show <agent> <conversation> --tools` — every tool with its command (secrets masked) and the external domains it named; never while a turn runs there. Who sees a thread: `--why`; someone's threads: `ghosty conversations ls --user <email>` |
 | "are images being metered / how much do images cost on Free" | staff only: `ghosty usage --images --plan free --since 7d [--by user]` — charges vs images agents delivered (far more deliveries than charges = the meter isn't reporting) and stored cost vs the table |
