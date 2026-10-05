@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.51"
+  version: "1.52"
 ---
 
 # Configure a Ghosty Studio agent
@@ -125,6 +125,7 @@ legacy and always `true`.)
 | "what did it answer to that? / audit a reply" | `ghosty turns show <id> [turn-id] --json` → `input` (what came in) and `output` (what it answered), any engine or channel |
 | "where did it say X? / find the turn where it quoted…" | `ghosty turns grep <id> "text" --since 7d [--role user\|agent] --json` → `matches[]` with `turnId` and `snippet`; then `turns show <id> <turnId>`. Text only, not tools |
 | "set the quote issuer / VAT / folio prefix" (house `cotizar` tool) | `ghosty agents set <id> --quote iva=0,prefix=SFI,vigencia=15` (empty value clears: `rfc=`); `ghosty agents get <id> --fields cotizacion` to read it. An own skill named `cotizar` already turns the house tool off |
+| "prices already include VAT except bulk / VAT only with invoice" | `ghosty agents set <id> --catalog productos.csv` (sku,nombre,precio,unidad,categoria) + `--quote iva-incluido=true,iva.GRANEL=16,solo-factura=true`; the category comes from the catalog, not the model; the agent passes `factura: true` when the customer asks for an invoice |
 | "why was it slow? / where did the time go?" | `ghosty turns show <id> [turn-id] --json` → `byTool` (seconds per tool), `steps` (timeline), `totals.outputTokens`; pool engines only (`timeline: false` otherwise) |
 | "is it running the new image? / it still behaves old" | `ghosty agents box <id> --check <path-the-new-image-brings> --json` → `stale`; if > 0, `ghosty agents box <id> --recycle`, one turn, check again (ACP: `agents restart`) |
 | "which PDF templates does it have?" | `ghosty skills templates <id> --json` → `templates[]` with `source` (`agente:<skill>` or `casa`); its own go in `<skill>/pdf-templates/<name>.html` |
