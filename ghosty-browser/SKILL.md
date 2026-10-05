@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs curl or Node 18+, network access to https://www.ghosty.studio, and Chrome with the Ghosty extension signed in to ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.4"
+  version: "1.5"
 ---
 
 # Use the person's Chrome through Ghosty
@@ -117,7 +117,10 @@ OpenAPI: https://www.ghosty.studio/openapi.yaml (tag *Navegador*).
   `handle_dialog {accept:true, promptText?}` BEFORE the action (arms the next one, 2 min) and repeat
   it. If accepting is irreversible the dialog stays open: ask the user, then `handle_dialog
   {accept:true}` goes through the confirmation. While one is open every tool says so instead of
-  hanging. A click that opens another tab says `↗ … [tabId N]`.
+  hanging. A click that opens another tab says `↗ … [tabId N]`. For screen recordings, arm with
+  `showMs` (≤ 3000) so the dialog stays visible a moment before it is answered.
+- `status` returns `build` (hash of the running code) and `capabilities`: check them after the user
+  reloads the extension.
 - **`type` clears the field first** (rich editors too); `clear: false` appends. If the field ended
   up different, the answer warns with ⚠️ — check it.
 - **Tag/chip fields** (YouTube, TikTok): `type` with `slowly: true` and comma-separated text; the
