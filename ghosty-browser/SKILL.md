@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs curl or Node 18+, network access to https://www.ghosty.studio, and Chrome with the Ghosty extension signed in to ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.3"
+  version: "1.4"
 ---
 
 # Use the person's Chrome through Ghosty
@@ -112,6 +112,12 @@ OpenAPI: https://www.ghosty.studio/openapi.yaml (tag *Navegador*).
 - **Dialogs**: if an action opens one, the answer starts with `⚠️ Apareció un diálogo: «…» —
   botones: [ref=eN] «…»`. Your action may NOT have completed: read it and decide (YouTube
   "Publish" → "Publish anyway"). Irreversible buttons still go through the confirmation.
+- **Native dialogs** (`confirm`, `alert`, `prompt`, "leave site?") are dismissed by default; the
+  answer says `⚠️ La acción abrió confirm «…» → cancelado por default`. To accept, call
+  `handle_dialog {accept:true, promptText?}` BEFORE the action (arms the next one, 2 min) and repeat
+  it. If accepting is irreversible the dialog stays open: ask the user, then `handle_dialog
+  {accept:true}` goes through the confirmation. While one is open every tool says so instead of
+  hanging. A click that opens another tab says `↗ … [tabId N]`.
 - **`type` clears the field first** (rich editors too); `clear: false` appends. If the field ended
   up different, the answer warns with ⚠️ — check it.
 - **Tag/chip fields** (YouTube, TikTok): `type` with `slowly: true` and comma-separated text; the
