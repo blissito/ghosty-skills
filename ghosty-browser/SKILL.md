@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs curl or Node 18+, network access to https://www.ghosty.studio, and Chrome with the Ghosty extension signed in to ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Use the person's Chrome through Ghosty
@@ -109,6 +109,16 @@ OpenAPI: https://www.ghosty.studio/openapi.yaml (tag *Navegador*).
   HIDDEN ones behind a button) with a `ref`; pass it as `target` to `file_upload` with absolute paths.
 - **Accounts/channels**: switch with the page's own account picker (avatar → "Switch account"; on
   Google also `?authuser=N` or accounts.google.com/AccountChooser). Never type passwords.
+- **Dialogs**: if an action opens one, the answer starts with `⚠️ Apareció un diálogo: «…» —
+  botones: [ref=eN] «…»`. Your action may NOT have completed: read it and decide (YouTube
+  "Publish" → "Publish anyway"). Irreversible buttons still go through the confirmation.
+- **`type` clears the field first** (rich editors too); `clear: false` appends. If the field ended
+  up different, the answer warns with ⚠️ — check it.
+- **Tag/chip fields** (YouTube, TikTok): `type` with `slowly: true` and comma-separated text; the
+  comma is sent as a real key and creates each tag.
+- **Multi-step flows** (e.g. publishing a YouTube Short: Create → Upload → `file_upload` → title,
+  description → "not made for kids" → tags → Visibility → user's yes → Publish → "Publish anyway")
+  are done step by step with your own judgment; if the user repeats one, save it as a shortcut.
 - Every tool has a hard timeout: a stuck call returns an error instead of blocking the next ones.
 - **Refs go stale.** After a navigation or a re-render, call `read_page` or `find` again before
   the next click. Never guess a ref.
