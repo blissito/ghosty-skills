@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs curl or Node 18+, network access to https://www.ghosty.studio, and Chrome with the Ghosty extension signed in to ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.6"
+  version: "1.7"
 ---
 
 # Use the person's Chrome through Ghosty
@@ -95,7 +95,7 @@ OpenAPI: https://www.ghosty.studio/openapi.yaml (tag *Navegador*).
 | Read long content without menus | `get_page_text` |
 | Act on a fresh `ref` | `click`, `type`, `fill_form`, `select_option`, `press_key`, `hover`, `drag` |
 | Scroll or wait for text | `scroll`, `wait_for` |
-| See the page | `take_screenshot` (to look, not to pick coordinates) |
+| See the page | `take_screenshot` (to look, not to pick coordinates; `clean: true` hides Ghosty's cursor/border for docs) |
 | Canvas, maps, odd widgets | `computer` (mouse/keyboard by coordinates) |
 | Attach without a file picker | `attach_image`, `file_upload` |
 | Tabs and window | `tabs`, `resize`, `viewport` |
