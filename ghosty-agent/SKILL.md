@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.54"
+  version: "1.55"
 ---
 
 # Configure a Ghosty Studio agent
@@ -167,6 +167,12 @@ legacy and always `true`.)
 | "download / export / back up this database", "give me the table in Excel" | `ghosty dbs export <id> <db>` → `<db>.sqlite` (whole database); one table as CSV: `ghosty dbs export <id> <db> --table <t>` (`--out` to choose the path). On the web: /app/datos?tab=dbs → the database → **.sqlite** / **table.csv** |
 | "use my browser / do it in my Chrome" | install Ghosty for Chrome (https://www.ghosty.studio/chrome), stay signed in to ghosty.studio and open /c: it pairs alone. In personal chats and scheduled tasks the agent gets `browser_*` tools (never in customer channels); never types passwords. Guide: https://www.ghosty.studio/docs/navegador |
 | "what do my agents remember about me?" / "make it remember X" | `ghosty me memories ls --json`; `me memories add "X"` (app-wide, all agents), `edit <id> "…"`, `rm <id>` (only travels in personal chats) |
+| "pause / resume this conversation", "stop the bot with this customer", "take it out of operator-only" | `ghosty cards pause <id> <folio\|phone> --mode 30min\|2h\|24h\|until_tomorrow\|permanent` (permanent = escalated, operator only) / `ghosty cards resume <id> <card>` (also lifts operator-only; it does NOT answer by itself). Both are logged |
+| "answer the ones left pending", "detonate pending replies", "ask the bot to reply to this customer" | list first: `ghosty cards pending <id> [--since 2026-10-06T02:13Z\|12h] --json` → `cards[].flags` (paused, escalated, window_closed, reaction, not_whatsapp, no_agent: those are NEVER answered). Show the user how many would be answered (`--reply --dry-run`), and only after they confirm: `ghosty cards pending <id> --since … --reply --yes` (real customers get messages). One card: `ghosty cards reply <id> <card> [--directive "…"] --yes`. Never on a production conversation without the user's explicit OK |
+| "who was answering this number?", "which numbers/pages were left without an agent?" | `ghosty channels whatsapp integrations <id> --json` → `lastAnswer {agentName, at}` per number; `--orphans` lists only numbers nobody answers today that had turns (`channels messenger ls <id> --orphans` for pages). Give it back with `ghosty channels whatsapp enable <that-agent> <number> --dry-run`, then `--yes` after the user confirms |
+| "change this paragraph / section of the prompt", "patch the prompt", "add this to the prompt" | write `{"edits":[{"what":"hours","find":"9 to 6","replace":"9 to 7"}]}` to a file and run `ghosty agents set <id> --prompt-patch edits.json --dry-run` (prints the diff), then without `--dry-run`. Append: `--prompt-append extra.md`. Applies on the server's CURRENT prompt (never `get --prompt-out` + `set --prompt-file` for a small change: it overwrites concurrent edits). An edit that doesn't find its place → 409, nothing changes |
+| "who changed this?", "audit log", "what happened to this agent's channels?", "who logged in as whom" | `ghosty audit ls [--workspace slug] [--agent id] [--actor email] [--action agent\|channel\|card\|factory\|workspace] [--since 24h] --json` (staff see all; others only their workspaces/agents) |
+| "list / show / rename a factory run", "who is @build?" | `ghosty factory runs ls --workspace <slug> [--room R]`, `ghosty factory runs show <n> --workspace <slug> [--full]`, `ghosty factory runs rename <n> "Title" --workspace <slug> --dry-run` then `--yes`; `ghosty agents ls --handle build [--workspace <slug>]` |
 | "clean up the board / archive test cards" | `ghosty cards archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
 | "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
 | "what's in its database? / fix this row" | `ghosty dbs query <id> <db> "SELECT …" [--arg V]… --json` (read only); `--write` only for a change the user asked for |
@@ -194,7 +200,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
-- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups enable`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
+- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups enable`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`, `cards reply`, `cards pending --reply`, `factory runs rename`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
 
 ## Verify
 
