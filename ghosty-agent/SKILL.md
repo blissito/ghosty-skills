@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.56"
+  version: "1.57"
 ---
 
 # Configure a Ghosty Studio agent
@@ -163,6 +163,7 @@ legacy and always `true`.)
 | "how much have I used? / am I out of usage?" | `ghosty usage --json` → `plan.name`, `week.pct` / `month.pct` (0–1), `exhausted` |
 | "let people try it without an account / share a demo" | `ghosty agents demo <id> --slug <name> [--expires "YYYY-MM-DDTHH:MM"] [--welcome T] [--starter T] [--chips "a\|b"] --json` then `ghosty agents demo enable <id>` → `url`; no flags = status; `--rotate` if the link leaked, `--off` to stop |
 | "put the agent on my website / chat bubble / web widget / embed" | `ghosty agents embed enable <id> --domains "<their-domain>,*.<their-domain>" [--welcome T] --json` → `snippet` (one `<script>`, paste before `</body>`; works on WordPress/Shopify/Wix). It only loads on those domains (ask the user which ones; https only). Needs engine `claude` (`engineOk`); if not, offer `ghosty agents set <id> --engine claude`. No flags = state; `--rotate` if the code leaked; `disable` to stop. Visitors are customers, each isolated; caps `--per-visitor`/`--per-ip`; failures in `lastError` |
+| "make the widget look like my site / change its name, avatar, colors, side, suggestions" | Same command, no re-paste needed (the bubble fetches its look): `--title T --subtitle T --avatar <https image>|none --icon chat|avatar|ghost --placeholder T --position right|left --offset X,Y --theme light|dark|auto --bubble-text T --auto-open S|off --starters "a|b"` (≤4 of THEIR suggestions; Ghosty's never show) and `--welcome T` = the first message. Fine style, no free CSS: `--style '{"fontFamily":"Barlow","radius":0,"headerBg":"#2d4a2e","titleUppercase":true,"statusDot":"#c8a96a","panelBg":"#fbf9f4","userBubbleBg":"#2d4a2e","agentBubbleBg":"#f3efe6","sendBg":"#f3efe6","sendArrow":"right","launcherBg":"#2d4a2e"}'` (keys: fontFamily from an allow-list, radius 0–24, headerBg/headerText, titleUppercase, statusDot, headerAvatar, panelBg, userBubbleBg/Text, agentBubbleBg/Text, inputBg, sendBg/sendIcon/sendArrow, launcherBg/launcherIcon; colors `#rrggbb`; patch per key, null resets one, `--style none` all). Take it from their brand: `--theme-source teams [--workspace SLUG]` or `--theme-source site --site-url <their site>` (imported as editable values). `ghosty agents embed <id> theme --json` exports it; `--style-file theme.json` applies it back. Errors come back as 400 with the reason |
 | "what files are in my account?" | `ghosty me files ls [--kind document] --json`; `me files upload <path>`, `me files rm <file-id>` |
 | "download / export / back up my files", "I want my files like in EasyBits" | `ghosty me files export --dry-run` (how many files and MB per folder), then `ghosty me files export --out <folder>` → `documents/`, `conversations/`, `library/`; rerunning only brings what's new. One file: `ghosty me files get <file-id> --out <path>` |
 | "download / export / back up this database", "give me the table in Excel" | `ghosty dbs export <id> <db>` → `<db>.sqlite` (whole database); one table as CSV: `ghosty dbs export <id> <db> --table <t>` (`--out` to choose the path). On the web: /app/datos?tab=dbs → the database → **.sqlite** / **table.csv** |
