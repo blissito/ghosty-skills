@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.58"
+  version: "1.59"
 ---
 
 # Configure a Ghosty Studio agent
@@ -176,7 +176,9 @@ legacy and always `true`.)
 | "who was answering this number?", "which numbers/pages were left without an agent?" | `ghosty channels whatsapp integrations <id> --json` → `lastAnswer {agentName, at}` per number; `--orphans` lists only numbers nobody answers today that had turns (`channels messenger ls <id> --orphans` for pages). Give it back with `ghosty channels whatsapp enable <that-agent> <number> --dry-run`, then `--yes` after the user confirms |
 | "change this paragraph / section of the prompt", "patch the prompt", "add this to the prompt" | write `{"edits":[{"what":"hours","find":"9 to 6","replace":"9 to 7"}]}` to a file and run `ghosty agents set <id> --prompt-patch edits.json --dry-run` (prints the diff), then without `--dry-run`. Append: `--prompt-append extra.md`. Applies on the server's CURRENT prompt (never `get --prompt-out` + `set --prompt-file` for a small change: it overwrites concurrent edits). An edit that doesn't find its place → 409, nothing changes |
 | "who changed this?", "audit log", "what happened to this agent's channels?", "who logged in as whom" | `ghosty audit ls [--workspace slug] [--agent id] [--actor email] [--action agent\|channel\|card\|factory\|workspace] [--since 24h] --json` (staff see all; others only their workspaces/agents) |
-| "list / show / rename a factory run", "who is @build?" | `ghosty factory runs ls --workspace <slug> [--room R]`, `ghosty factory runs show <n> --workspace <slug> [--full]`, `ghosty factory runs rename <n> "Title" --workspace <slug> --dry-run` then `--yes`; `ghosty agents ls --handle build [--workspace <slug>]` |
+| "why did this run take so long?", "what did run N cost?", "where did @build spend its time?" | `ghosty factory runs show <n> --timing --workspace <slug> --json` (each role's turns with minutes, model, USD; clock split working / waiting for a person / other; commands ≥ 60 s). Long commands without output usually mean a hung test or a missing service in the work box |
+| "how is the factory doing?", "cost per merged PR", "merge rate" | `ghosty factory runs stats --since 30d [--repo owner/repo] --workspace <slug> --json` |
+| "list / show / rename a factory run", "who is @build?" | `ghosty factory runs ls --workspace <slug> [--room R]` (with time and cost), `ghosty factory runs show <n> --workspace <slug> [--full]`, `ghosty factory runs rename <n> "Title" --workspace <slug> --dry-run` then `--yes`; `ghosty agents ls --handle build [--workspace <slug>]` |
 | "clean up the board / archive test cards" | `ghosty cards archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
 | "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
 | "what's in its database? / fix this row" | `ghosty dbs query <id> <db> "SELECT …" [--arg V]… --json` (read only); `--write` only for a change the user asked for |
