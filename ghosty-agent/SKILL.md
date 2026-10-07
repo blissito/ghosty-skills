@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.59"
+  version: "1.60"
 ---
 
 # Configure a Ghosty Studio agent
@@ -177,6 +177,7 @@ legacy and always `true`.)
 | "change this paragraph / section of the prompt", "patch the prompt", "add this to the prompt" | write `{"edits":[{"what":"hours","find":"9 to 6","replace":"9 to 7"}]}` to a file and run `ghosty agents set <id> --prompt-patch edits.json --dry-run` (prints the diff), then without `--dry-run`. Append: `--prompt-append extra.md`. Applies on the server's CURRENT prompt (never `get --prompt-out` + `set --prompt-file` for a small change: it overwrites concurrent edits). An edit that doesn't find its place → 409, nothing changes |
 | "who changed this?", "audit log", "what happened to this agent's channels?", "who logged in as whom" | `ghosty audit ls [--workspace slug] [--agent id] [--actor email] [--action agent\|channel\|card\|factory\|workspace] [--since 24h] --json` (staff see all; others only their workspaces/agents) |
 | "why did this run take so long?", "what did run N cost?", "where did @build spend its time?" | `ghosty factory runs show <n> --timing --workspace <slug> --json` (each role's turns with minutes, model, USD; clock split working / waiting for a person / other; commands ≥ 60 s). Long commands without output usually mean a hung test or a missing service in the work box |
+| "why did run N fail / get stuck?", "what should we change so it doesn't happen again?" | `ghosty factory runs why <n> --workspace <slug> --json` (category, impact, critical step with evidence, typed actions: role_rules → `.ghosty/factory.md`, repo_setup, skill, prompt; `--refresh` redoes it). Stuck patterns per step are in `runs show <n> --timing` |
 | "how is the factory doing?", "cost per merged PR", "merge rate" | `ghosty factory runs stats --since 30d [--repo owner/repo] --workspace <slug> --json` |
 | "list / show / rename a factory run", "who is @build?" | `ghosty factory runs ls --workspace <slug> [--room R]` (with time and cost), `ghosty factory runs show <n> --workspace <slug> [--full]`, `ghosty factory runs rename <n> "Title" --workspace <slug> --dry-run` then `--yes`; `ghosty agents ls --handle build [--workspace <slug>]` |
 | "clean up the board / archive test cards" | `ghosty cards archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
