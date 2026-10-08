@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs curl or Node 18+, network access to https://www.ghosty.studio, and Chrome with the Ghosty extension signed in to ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.7"
+  version: "1.8"
 ---
 
 # Use the person's Chrome through Ghosty
@@ -75,11 +75,11 @@ machine, set `GS_BROWSER_TOKEN` to the `btr_…` token from the panel (remote pa
    ```bash
    curl -s https://www.ghosty.studio/api/browser/call \
      -H "Authorization: Bearer $BT" -H "content-type: application/json" \
-     -d '{"tool":"navigate","input":{"url":"https://example.com"},"client":"Claude Code"}'
+     -d '{"tool":"navigate","input":{"url":"https://example.com"},"client":"Claude Code","session":"task-42"}'
    ```
 
    `tool` accepts `navigate` or `browser_navigate`. `client` is the name the user sees in the
-   panel. `timeoutMs` defaults to 60000 (max 180000). `200` = result, `401` = token expired or
+   panel. `session` (optional, ≤ 80 chars) identifies your agent: each session gets its own tab. `timeoutMs` defaults to 60000 (max 180000). `200` = result, `401` = token expired or
    revoked (renew it), `409` = browser not connected or extension too old (the `error` says which),
    `504` = the tool failed or timed out (`error`).
 
@@ -102,9 +102,13 @@ OpenAPI: https://www.ghosty.studio/openapi.yaml (tag *Navegador*).
 | Debug the user's site | `console_messages`, `network_requests` |
 | Record what you did | `gif_creator` (`start_recording` → … → `stop_recording` → `export`) |
 
-- **Parallel work: always pass `tabId`.** `tabs {action:"new", url, background:true}` returns a
-  `tabId`; pass it to every call of that task. Two agents/subagents (say, YouTube and TikTok) then
-  run at once without stepping on each other or stealing the visible tab. Answers start with `[tab N]`.
+- **Each agent has its own tab.** Every Ghosty conversation, every `browser-mcp` process and every
+  HTTP `session` gets its own tab in the "Ghosty" group: several agents drive the same Chrome at once
+  without stepping on each other, with no `tabId` needed. The first one uses the usual tab; the rest
+  open theirs in the background without stealing the visible one.
+- **Parallel tasks of the same agent: pass `tabId`.** `tabs {action:"new", url, background:true}`
+  returns a `tabId`; pass it to every call of that task (say, YouTube and TikTok, or two subagents
+  sharing one MCP process). Answers start with `[tab N]`.
 - **Uploads**: `read_page` ends with "Subir archivos" listing every `<input type=file>` (also the
   HIDDEN ones behind a button) with a `ref`; pass it as `target` to `file_upload` with absolute paths.
 - **Accounts/channels**: switch with the page's own account picker (avatar → "Switch account"; on
@@ -120,7 +124,7 @@ OpenAPI: https://www.ghosty.studio/openapi.yaml (tag *Navegador*).
   hanging. A click that opens another tab says `↗ … [tabId N]`. For screen recordings, arm with
   `showMs` (≤ 3000) so the dialog stays visible a moment before it is answered.
 - `status` returns `build` (hash of the running code) and `capabilities`: check them after the user
-  reloads the extension.
+  reloads the extension. `sessions` in `capabilities` = one tab per agent (older builds share one tab).
 - **`type` clears the field first** (rich editors too); `clear: false` appends. If the field ended
   up different, the answer warns with ⚠️ — check it.
 - **Tag/chip fields** (YouTube, TikTok): `type` with `slowly: true` and comma-separated text; the
