@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.63"
+  version: "1.64"
 ---
 
 # Configure a Ghosty Studio agent
@@ -114,7 +114,7 @@ legacy and always `true`.)
 | "stop it / it keeps working in the background" | `ghosty turns cancel <id> <conversation-id> --json` → `detenido` + `background` (video jobs, subagents, wake-ups canceled: nothing more is delivered) |
 | "test it with this photo / PDF" | `ghosty try <id> "…" --media FILE` (repeatable) or `ghosty chat <id> "…" --media FILE`; as a WhatsApp customer add `--waba --session <phone>` |
 | "do X to all agents that…" (staff) | `ghosty agents ls --sponsor <email> \| --owner <email> [--engine E] --ids`, then `xargs -I{} ghosty agents set {} … --dry-run` first |
-| "clean up its history / delete the test chats" | `ghosty conversations rm <id> --kind test --before 7d --dry-run`, confirm, then without `--dry-run` (`--yes`); customer threads: `conversations archive <id> --kind channel` (never rm) |
+| "clean up its history / delete the test chats" | `ghosty conversations rm <id> --kind test --before 7d --dry-run`, confirm, then without `--dry-run` (`--yes`); customer threads: `conversations archive <id> --kind channel` (never rm); only the user's own chats with it: `conversations rm <id> --kind personal --dry-run` (also gone from their apps) |
 | "merge my duplicated documents" | `ghosty agents docs dedupe --dry-run`, show the merges, then `--yes`; two specific ones: `ghosty agents docs dedupe <keep-id> <drop-id>` |
 | "use this file from my files in the chat" | `ghosty me files ls --q <name> --json` → id, then `ghosty chat <id> "…" --file <file-id>` |
 | "which workspaces do I have / where is X's workspace" | `ghosty spaces ls [--user <email>] --json` (others: staff) |
