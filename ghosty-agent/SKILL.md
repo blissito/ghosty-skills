@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.64"
+  version: "1.65"
 ---
 
 # Configure a Ghosty Studio agent
@@ -147,7 +147,7 @@ legacy and always `true`.)
 | "did the push reach them / did the announcement go out" | staff only: `ghosty push log --user <email> --since 2d` (announcements show as `novedad`); `ghosty novedades ls` shows delivered/rejected per announcement |
 | "my site is paused / will pause", "keep my page online", "pin my site", "reactivate my page" | `ghosty sites ls` (state: pinned, paused, pauses on…), then `ghosty sites pin <slug>` — «Sitios fijos»: $49 USD/yr or $5 USD/mo ($990 / $99 MXN), includes up to 3 sites; never pauses, no banner. With a free slot it pins at once; otherwise it prints a card-payment link to hand over as is; `needs_pack` = all slots used: ask, then `--add-pack`. `--interval month`, `--currency mxn`. `ghosty sites unpin <slug>` frees a slot; `ghosty sites pins [--cancel]` |
 | "publish this demo / landing as a Ghosty site", "change its URL / slug" | staff only: `ghosty sites publish <file.html|folder> --title T [--slug S]` (house site on EasyBits: no owner, no expiry, no banner); update it with `--site <slug>` (without it a NEW site is created); `ghosty sites slug <slug> <new-slug>`; `ghosty sites ls --house`. Exit 1 with `slug_unsupported` = EasyBits does not accept a slug yet: say so, don't retry |
-| "turn this tool off for customers / in WhatsApp" | `ghosty agents get <id> --fields tools --json` → `tools.canales`, then `ghosty agents set <id> --tool wa:<tool>=off` (no channel = everywhere) |
+| "turn this tool off for customers / in WhatsApp" | `ghosty agents get <id> --fields tools --json` → `tools.canales` (what really runs per channel), then `ghosty agents set <id> --tool wa:<tool>=off` (no channel = everywhere). Team tools (identity, notes, full board, the owner's personal accounts) never run for customers and `=on` can't open them; a whole connector per channel: agent page → Connectors |
 | "put this face / avatar on the agent" | `ghosty agents set <id> --avatar <https-url or local png/jpg/webp>` → updates every Teams where it's active |
 | "remove this agent from the workspace" | irreversible (memory and files go too): confirm with the user, then `ghosty agents rm <id> --from-workspace --yes` (turns it off in every Teams, then deletes it) |
 | "how many boxes / how much capacity does it have?" | `ghosty agents box <id> --json` → `capacity`; per workspace: `ghosty usage --boxes --workspace <slug> --json` |
