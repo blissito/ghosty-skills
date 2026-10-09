@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.65"
+  version: "1.66"
 ---
 
 # Configure a Ghosty Studio agent
@@ -140,6 +140,7 @@ legacy and always `true`.)
 | "renew / extend this workspace" or "rename its slug" | staff only: `ghosty spaces renew <workspace> --until YYYY-MM-DD --dry-run`, confirm, then `--yes`; `ghosty spaces rename <old> <new> --dry-run` first |
 | "make X the owner of this workspace / hand it over to the client" | staff only: `ghosty spaces transfer <workspace> --to <email> --keep-as admin --copy-keys --dry-run --json` → `keys.missing` (agents without a key stop answering) and `warnings`; confirm with the user, then without `--dry-run` plus `--yes`. Only the owner changes: agents, skills and history stay; documents, databases, boards and numbers its agents use move (`resources`); anything also used outside stays and shows in `warnings`. `--copy-keys` also copies the connectors (MercadoPago, Skydropx…) it lacks |
 | "assign X (Ghosty staff) to this client" | staff only: `ghosty staff assign <staff-email> <client-email> --reason "…"` (`unassign` to remove, `staff ls`); the assigned person operates the client's agents, documents, databases and boards as themselves, without keys, billing or transfers |
+| "archive / remove a workspace", "bring back an archived workspace" | owner or staff: `ghosty spaces archive <workspace> --dry-run` (shows status and agent count), confirm with the user, then `--yes`. Nothing is deleted: it leaves `/app` and `spaces ls`, agents and data stay. `ghosty spaces restore <workspace> --yes` undoes it |
 | "who changed this workspace? / when was it transferred?" | `ghosty spaces log <workspace> --since 30d --json` (owner or staff) → `events[]` with `actor`, `action`, `detail` |
 | "check X's health / X's app is stuck" (support) | staff only: `ghosty agents doctor --user <email> [agent]` — doctor, latest turns with «fetched» (`never` = their app didn't pick up a finished answer), plan/bag and boxes (duplicates flagged); `ghosty agents ls --user <email> --app android` shows their list and phones with the app build (old build = ask them to update) |
 | "what did this agent run / did it leak anything" (support) | staff only: `ghosty conversations show <agent> <conversation> --tools` — every tool with its command (secrets masked) and the external domains it named; never while a turn runs there. Who sees a thread: `--why`; someone's threads: `ghosty conversations ls --user <email>` |
