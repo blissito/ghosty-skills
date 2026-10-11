@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.70"
+  version: "1.71"
 ---
 
 # Configure a Ghosty Studio agent
@@ -110,7 +110,7 @@ legacy and always `true`.)
 | "test it as a WhatsApp customer / with a photo / with earlier context" | `ghosty try <id> "…" --waba --session <made-up phone> [--media FILE] [--history FILE --reset] --json` → `sent[]` (what it would send, tools included: `kind` text/voice/file/rich with `rich` ubicacion/cita/boton/contacto/reaccion; nothing leaves). A customer attachment exactly as Formmy delivers it: add `--as-formmy` → `media.copied` |
 | "show me this customer's chat on the board / did the attachment arrive?" | `ghosty cards ls <id> [--q name-or-phone] --json`, then `ghosty cards show <id> <folio\|phone> [--limit 50] --json` → `messages[]` with `role`, `content`, `mediaType`, `mediaCopied` |
 | "replay these real conversations" | `ghosty try <id> --replay sample.json --out ./replay [--max N]`; read `./replay/replay.json`; `--resume` if it was cut |
-| "is it configured right? / why does it answer badly?" | `ghosty agents doctor <id> --json` → `checks[]` with `level` (ok/warn/error) and a `fix` command each; exit 1 = something to fix |
+| "is it configured right? / why does it answer badly?" | `ghosty agents doctor <id> --json` → `info` (model, effort, native subagents, answers /c, box for staff) and `checks[]` with `level` (ok/warn/error) and a `fix` command each; exit 1 = something to fix |
 | "did it forget the conversation? / did it start from scratch?" | `ghosty turns ls <id> --session <conversation> --json` → each turn's `sdk.resumed` (false + `freshReason` orphan/stale/replaced = it lost its memory; `new` = first turn). Claude agents only |
 | "try my public demo as a visitor / does it remember after a box change?" | `ghosty demos try <slug> "…"` (same thread across runs; `--new` for a new visitor); memory across boxes: second message with `--recycle-between --agent <id>`. It counts against the demo's caps |
 | "stop it / it keeps working in the background" | `ghosty turns cancel <id> <conversation-id> --json` → `detenido` + `background` (video jobs, subagents, wake-ups canceled: nothing more is delivered) |
@@ -138,6 +138,7 @@ legacy and always `true`.)
 | "remove these env variables" | `ghosty agents set <id> --unset-env K1,K2` |
 | "which models can it use? / is this model valid?" | `ghosty engines ls --models --json` → `engines[].models[]` (`id`, `multiplier`, `ownKeyOnly`); an invalid `--model` is rejected with the valid list |
 | "how much did this workspace use / which agent spends most / messages left without balance" | `ghosty usage --workspace <slug> --by agent,day --days 14 --json` → `rows`, `agents` (turns, failed, billable, noQuota); the unanswered ones: `ghosty turns ls --workspace <slug> --quota-hits --json` (owner or staff) |
+| "how much does this agent cost / API equivalent / spend of /c vs Messenger" | `ghosty usage --agent <id> --by model,day,canal --cost --json` → `rows` (day, model, canal, tokens, `usd` at provider list price) and `totalUsd`; its turns per channel: `ghosty turns ls <id> --canal anon --json` |
 | "who answers /c without an account / turn native subagents on for X" or "give this agent a bigger box" | staff only: `ghosty settings ls`, `ghosty settings set ANON_NATIVE_AGENT_ID <agent-id>` (`unset` = back to the default), `ghosty settings set NATIVE_SUBAGENT_AGENTS +<agent-id>`; box: `ghosty agents set <id> --box 4096:10` (MB:conversations, recycles its boxes) |
 | "give this agent its own token bag / make it one-time" | staff only: `ghosty bags ls <workspace>`, `ghosty bags create <workspace> "<bag>" --tokens 20M [--recurring off]`, `ghosty agents set <id> --bag "<bag>"`; change: `ghosty bags set <workspace> "<bag>" --tokens 30M` |
 | "renew / extend this workspace" or "rename its slug" | staff only: `ghosty spaces renew <workspace> --until YYYY-MM-DD --dry-run`, confirm, then `--yes`; `ghosty spaces rename <old> <new> --dry-run` first |
