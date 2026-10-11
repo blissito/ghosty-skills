@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.69"
+  version: "1.70"
 ---
 
 # Configure a Ghosty Studio agent
@@ -154,6 +154,7 @@ legacy and always `true`.)
 | "turn this tool off for customers / in WhatsApp" | `ghosty agents get <id> --fields tools --json` → `tools.canales` (what really runs per channel), then `ghosty agents set <id> --tool wa:<tool>=off` (no channel = everywhere). Team tools (identity, notes, full board, the owner's personal accounts) never run for customers and `=on` can't open them; a whole connector per channel: agent page → Connectors |
 | "put this face / avatar on the agent" | `ghosty agents set <id> --avatar <https-url or local png/jpg/webp>` → updates every Teams where it's active |
 | "remove this agent from the workspace" | irreversible (memory and files go too): confirm with the user, then `ghosty agents rm <id> --from-workspace --yes` (turns it off in every Teams, then deletes it) |
+| "start its box now / warm it up before a demo" | `ghosty agents box <id> --start` (no turn spent; 503 = the space's boxes are full) |
 | "how many boxes / how much capacity does it have?" | `ghosty agents box <id> --json` → `capacity`; per workspace: `ghosty usage --boxes --workspace <slug> --json` |
 | "apply the new plan now" | `ghosty plan apply <workspace> --dry-run`, show the changes and monthly total, confirm, then without `--dry-run` (`--yes`) |
 | "copy its data from EasyBits" | `ghosty dbs import <id> <db> --from easybits:<db-id> --dry-run` first (needs `EASYBITS_API_KEY`), show the plan (and `gsOnly`: rows written in gs that replacing would delete — then use `--tables` or `--append`), then run without `--dry-run` (`--yes` if replacing rows) |
