@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.68"
+  version: "1.69"
 ---
 
 # Configure a Ghosty Studio agent
@@ -138,6 +138,7 @@ legacy and always `true`.)
 | "remove these env variables" | `ghosty agents set <id> --unset-env K1,K2` |
 | "which models can it use? / is this model valid?" | `ghosty engines ls --models --json` → `engines[].models[]` (`id`, `multiplier`, `ownKeyOnly`); an invalid `--model` is rejected with the valid list |
 | "how much did this workspace use / which agent spends most / messages left without balance" | `ghosty usage --workspace <slug> --by agent,day --days 14 --json` → `rows`, `agents` (turns, failed, billable, noQuota); the unanswered ones: `ghosty turns ls --workspace <slug> --quota-hits --json` (owner or staff) |
+| "who answers /c without an account / turn native subagents on for X" or "give this agent a bigger box" | staff only: `ghosty settings ls`, `ghosty settings set ANON_NATIVE_AGENT_ID <agent-id>` (`unset` = back to the default), `ghosty settings set NATIVE_SUBAGENT_AGENTS +<agent-id>`; box: `ghosty agents set <id> --box 4096:10` (MB:conversations, recycles its boxes) |
 | "give this agent its own token bag / make it one-time" | staff only: `ghosty bags ls <workspace>`, `ghosty bags create <workspace> "<bag>" --tokens 20M [--recurring off]`, `ghosty agents set <id> --bag "<bag>"`; change: `ghosty bags set <workspace> "<bag>" --tokens 30M` |
 | "renew / extend this workspace" or "rename its slug" | staff only: `ghosty spaces renew <workspace> --until YYYY-MM-DD --dry-run`, confirm, then `--yes`; `ghosty spaces rename <old> <new> --dry-run` first |
 | "make X the owner of this workspace / hand it over to the client" | staff only: `ghosty spaces transfer <workspace> --to <email> --keep-as admin --copy-keys --dry-run --json` → `keys.missing` (agents without a key stop answering) and `warnings`; confirm with the user, then without `--dry-run` plus `--yes`. Only the owner changes: agents, skills and history stay; documents, databases, boards and numbers its agents use move (`resources`); anything also used outside stays and shows in `warnings`. `--copy-keys` also copies the connectors (MercadoPago, Skydropx…) it lacks |
