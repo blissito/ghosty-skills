@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.71"
+  version: "1.72"
 ---
 
 # Configure a Ghosty Studio agent
@@ -194,6 +194,7 @@ legacy and always `true`.)
 | "stop giving it this database" | `ghosty dbs revoke <id> <db>` (prints the `grant` that undoes it) |
 | "give an agent to each of MY customers (partner)" | not for a normal owner: see https://www.ghosty.studio/docs/cli/partners.md (`ghosty partner --help`). Issue a credential without printing it: `ghosty partner credentials create --label prod --out-env .env.partner`; debug tools: `ghosty partner try <org> "…" --verbose`; several agents per partner: `--agent <slug>` on `partner agent get|apply` and `partner try`; a business's WhatsApp number: `channels whatsapp link <partner-agent-id> … --partner-tenant <org> --partner-agent <slug>`; WhatsApp groups of a partner agent: `ghosty partner wa groups ls|link <jid> --tenant <org> --agent <slug>|create|unlink`; a business's WABA number registered by the partner in Formmy: `ghosty partner waba links create --tenant <org> --agent nik-public` (url + secret for Formmy) then `set <id> --integration <formmy-id> --on` |
 | "work in my client's account / workspace" | `ghosty login --device --profile <client>`: give the client the printed link and code to approve; then add `--profile <client>` to every command (`ghosty logout --profile <client>` revokes it) |
+| "tell @plan / an agent in Teams to…", "post this in the room / thread" | `ghosty teams post <workspace>#<room>[/<thread-message-id>] "@plan …" [--wait]` → posted as the user (no thread = new thread, like «Pedir»), the mentioned agent answers; `--wait` prints its answer. Only for something the user asked to send |
 | "have it speak in this Teams room / thread at 9" | `ghosty schedule add <id> "…" --teams <workspace>#<room>[/<thread-message-id>] --at ISO \| --in 30m` → it answers there as if mentioned; `ghosty schedule ls\|rm <id> [sched-id] --teams <workspace>` |
 | "have it do X every day / at 9 / remind me" | `ghosty schedule add <id> "…" --at ISO \| --in 30m [--every 12h --until ISO] [--title T]`; each run notifies the user's phone, an answer of exactly `OK` stays silent. `ghosty schedule ls|rm <id>` |
 
