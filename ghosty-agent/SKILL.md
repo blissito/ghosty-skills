@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.72"
+  version: "1.73"
 ---
 
 # Configure a Ghosty Studio agent
@@ -46,6 +46,16 @@ reaches only that agent (no `agents ls`, no `chat`).
 
 Exit codes: `0` ok · `1` API error (read the message, don't retry blindly) · `2` usage error
 (check `--help`) · `3` not signed in.
+
+### From Claude or any MCP client: the account connector
+
+To work with the user's agents from Claude, Claude Code or another MCP client (not to configure
+them), the account exposes an OAuth MCP server at `https://www.ghosty.studio/mcp`:
+`claude mcp add --transport http ghosty https://www.ghosty.studio/mcp` (or Claude → Settings →
+Connectors → Add custom connector). The user approves the login once. Tools: `list_agents`,
+`message_agent`, `get_agent_reply`, `list_conversations`, `read_conversation`, `crm_search_leads`,
+`crm_read_lead`, `crm_reply_lead`, `crm_pause_lead`, `list_files`, `get_usage`, `whoami`. Docs:
+https://www.ghosty.studio/docs/protocolos/conector-claude
 
 ### Fallback: raw HTTP
 
