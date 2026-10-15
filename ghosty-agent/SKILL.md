@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.73"
+  version: "1.74"
 ---
 
 # Configure a Ghosty Studio agent
@@ -99,6 +99,7 @@ legacy and always `true`.)
 | "which toolsets / connectors does it really have?" | `ghosty agents get <id> --fields toolsets,connectors --json` → effective `toolsets[]` and `connectors[]` with `connected`, `granted`, `effective` |
 | "turn off most of Ghosty's skills" | `ghosty skills house <id> --only a,b --dry-run`, then without `--dry-run` (`--enable`/`--disable` for a few) |
 | "one board per number / move these cards to another board" | `ghosty boards ls <workspace>`, `boards create <workspace> "<name>" --columns-from main`, `boards assign <agent-id> "<name>"`, `boards move-cards <workspace> --from main --to "<name>" --integration <formmy-id> --dry-run` then `--yes` after confirming; `boards rm <workspace> "<name>" --yes` deletes an empty one |
+| "give X access to the workspace / board for a few days" (reviewer accounts) | `ghosty spaces members add <workspace> <email> --until 14d` (`--role admin` to let them invite), `ghosty boards access <workspace> <board> --add <email> --until 14d` (a whole-workspace board needs no list); `spaces members rm <workspace> <email> --yes` removes; `ghosty access why <email> <agent-id>` or `--workspace W --board B` explains why someone sees something |
 | "edit its (long) prompt" | `ghosty agents get <id> --prompt-out PROMPT.md`, edit the file, `ghosty agents set <id> --prompt-file PROMPT.md` |
 | "base its prompt on another agent's (a branch, a variant)" | write an overlay `{"edits":[{"what","find","replace","regex"?,"all"?}]}`, `ghosty agents set <id> --prompt-base <base-id> --prompt-overlay overlay.json --dry-run --out /tmp/p.md`, check, then without `--dry-run`. It regenerates when the base changes; its own prompt can't be edited while linked (`--prompt-base none` unlinks) |
 | "give it the CRM / sales tools" | `ghosty agents set <id> --toolsets +crm` (a plain list replaces; `-x` removes) |
@@ -226,7 +227,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
-- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups enable`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`, `cards reply`, `cards pending --reply`, `factory runs rename`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
+- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups enable`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`, `spaces members rm`, `cards reply`, `cards pending --reply`, `factory runs rename`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
 
 ## Verify
 
