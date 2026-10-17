@@ -59,6 +59,10 @@ Body: `{ "servers": [ …full list… ] }`. Each server is one of:
 
 Names: `a-z 0-9 - _`, max 20 servers. The agent restarts automatically.
 
+## POST /mcp/connect
+Adds ONE remote server by its URL without rewriting the list (same name = replaced). Body `{ "name": "notion", "url": "https://…", "token"?: "…" }`.
+With `token` it is saved with `Authorization: Bearer <token>` → `{ ok, added }`. Without it gs probes the URL: open server → `{ ok, added }`; OAuth server → `{ authorizeUrl }` (the person opens it; on callback gs adds the server and refreshes its token through its proxy). CLI: `ghosty mcp connect <id> --name … --url … [--from-env VAR]`.
+
 ## GET /whatsapp  ·  PUT /whatsapp
 Which WhatsApp numbers this agent answers. Numbers belong to the workspace and are paired from Sales
 (`salesUrl`); here you only choose who answers. `PUT {"numbers": ["<id>", …]}` leaves the agent

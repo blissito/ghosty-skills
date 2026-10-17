@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.76"
+  version: "1.77"
 ---
 
 # Configure a Ghosty Studio agent
@@ -115,7 +115,7 @@ legacy and always `true`.)
 | "make it think more / less" | Ghosty · Lite: `ghosty agents set <id> --env GHOSTY_THINKING_EFFORT=off\|low\|medium\|high\|max`. Codex: `--env FLEET_EFFORT=none\|minimal\|low\|medium\|high\|xhigh\|max` |
 | "give it these files / documents / knowledge" | `ghosty files put <id> <name> --file <local>`, one per file |
 | "install / teach it a skill" | `ghosty skills add <id> <slug> --file SKILL.md` (or just `<slug>` from the catalog: `ghosty skills ls <id>`), then `ghosty agents restart <id>` only if `needsRestart` |
-| "connect it to this MCP server" | `ghosty mcp get <id> --json > servers.json`, add the server, `ghosty mcp set <id> --file servers.json` (replaces; restarts by itself). One key per end user of another product: header `"Authorization": "Bearer ${turn.token}"` (http only, not ACP); each `message-stream` turn then needs `turnToken` |
+| "connect it to this MCP server" | remote https server: `ghosty mcp connect <id> --name <n> --url <https-url> [--from-env VAR] --json` (with a token: the NAME of an env var; without one, if it returns `authorizeUrl` give that link to the user — gs adds the server when they authorize; `--no-open` on a remote box). Any other shape (stdio, several at once): `ghosty mcp get <id> --json > servers.json`, add the server, `ghosty mcp set <id> --file servers.json` (replaces; restarts by itself). One key per end user of another product: header `"Authorization": "Bearer ${turn.token}"` (http only, not ACP); each `message-stream` turn then needs `turnToken` |
 | "what does it have?" | `ghosty agents get <id> --json` → prompt, model, files, skills, mcp |
 | "does it work? / test it" | `ghosty try <id> "…" --json` → the agent's answer (see Verify) |
 | "talk to it / ask it something" | `ghosty chat <id> "…" --json` → streams `chunk` lines, ends with `done` |
