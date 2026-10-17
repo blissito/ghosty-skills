@@ -95,6 +95,15 @@ Raw image (`content-type: image/png|jpeg|webp`, ≤ 10 MB) or `{ "url": "https:/
 ## DELETE /
 Deletes the agent and its machines. Owner only (`403` for an editor or a `gat_` token); `409` if a workspace has it active (the message names it). `?fromWorkspace=1` turns it off in every Teams first, then deletes (owner or Ghosty staff). → `{ deleted: id, unbound?: [slug] }`.
 
+## POST /token/rotate  ·  POST /token/revoke
+Owner session only (`403` with a `gat_` token, an editor or a shared admin). `rotate` → `{ agentId, token }`: the new `gat_` token, shown ONCE; the old one stops working. `revoke` → `{ agentId, revoked: true, hadToken }`: the editor channel closes. On ACP engines both restart the relay and cut the turn in flight; `502` = it couldn't reach the box and nothing changed. CLI: `ghosty agents token rotate|revoke`.
+
+## GET|POST|DELETE /memory
+Rules its team taught it and its promos (the agent page → Memory). `GET` → `{ notes: [{ id, scope, content, source, createdAt }], promos: [{ id, title, details, imageUrl, validFrom, validUntil, active, live }] }` (`scope` `""` = every channel; `live` = offered today, CDMX). `POST { content, scope?, replaces? }` → `{ note }` (`replaces` edits that rule; without `scope` it keeps its channel). `POST { promo: { id?, title?, details?, validFrom?, validUntil?, active?, imageUrl? } }` → `{ promo, created, warning? }` (`201` when created; with `id` only the given fields change). `DELETE { id }` → `{ deleted, kind: note|promo }`. Works with the `gat_` token too. CLI: `ghosty agents memory`.
+
+## POST /transfer
+Owner (or Ghosty staff) session, never `gat_`. `{ to: email, workspace?: their-slug, dryRun? }` hands the agent over with its box, memory and files → `{ kind: "transfer", to, workspace, workspaces, warnings, transferred? }`. `{ workspace: slug|"none", dryRun?, force? }` moves it between your workspaces → `{ kind: "move", from, to, warnings, steps, failed }`. Always `dryRun: true` first and show it; `400` with a readable reason (no account, plan limit, model over the plan, @handle taken, busy box). CLI: `ghosty agents transfer`.
+
 ## GET|POST|DELETE /teams-schedule
 A turn at a set time in a Ghosty Teams room or thread: it answers there as if mentioned. `GET ?workspace=slug` → `{ scheduled: [...] }`; `POST { workspace, channel, parentId?, text, dueAt (ISO) }` → `{ id, channel, parentId, dueAt }`; `DELETE { workspace, id }` → `{ ok }`. The agent must be active in that workspace's Teams and the caller a member; never with a `gat_` token (`403`). CLI: `ghosty schedule add|ls|rm <id> … --teams <ws>#<room>[/<thread>]`.
 
@@ -102,6 +111,9 @@ A turn at a set time in a Ghosty Teams room or thread: it answers there as if me
 `GET /tasks` → `{ tasks: [{ id, kind: download|audio|video|captions, label, state: running|done|failed, startedAt, endedAt, elapsedMs, url?, error?, sessionId?, delivered, wakePending? }], running }`: background jobs from your personal chats, last 24 h (read-only; stop with `POST /conversations/{sid}/cancel`). CLI: `ghosty turns jobs <id>`.
 `GET /schedule` → pending scheduled turns and recent runs; schedule and cancel per conversation (`/conversations/{sid}/schedule[/{id}]`). CLI: `ghosty schedule`.
 `POST /conversations/{sid}/continue` → `{ id }` (new linked thread) · `POST …/model { value }` · `POST …/permission { id, optionId }` → `{ resuelto }` · `POST|DELETE …/share` → `{ compartida, slug }` (`/s/{slug}`) · `GET …/subagents` (SSE: `snapshot` first) · `POST …/subagents/{taskId}/stop`. CLI: `ghosty conversations continue|model|permission|share|subagents`.
+
+## Editable docs (`/api/v2/me/docs/{id}`, account session with `files`)
+The docs an agent delivers in a chat (link `/app/docs/{id}`). `GET [?v=n]` → `{ id, title, sessionId, agentId, version: { n, author, envelope }, latest, versions }` · `PUT { blocks }` → `{ versionId }` · `POST { restore: n }` → `{ versionId }` · `GET /export?format=pdf|md[&v=n]` (bytes) · `GET /check[?v=n&lang=es]` (NDJSON: `{total}` then `{id, hash, matches}` per block; offsets are inside each block's text) · `GET /tts?i=<block>[&s=<sentence>][&v=n]` (audio; `X-Seg-Count` = sentences in the block; `204` = no text). CLI: `ghosty me docs`.
 
 ## Workspace (not under /agents/{id})
 `GET /api/v2/engines` → valid engines and models. `GET /api/v2/workspaces/{slug}/usage?days=14` → turns, tokens and no-balance messages per agent/day (owner or staff). `GET|POST /api/v2/workspaces/{slug}/bags`, `PATCH|DELETE …/bags/{bag}` (writes: staff). `POST /api/v2/workspaces/{slug}/renew {until}` and `…/rename {to}` (staff; `dryRun: true` first).
