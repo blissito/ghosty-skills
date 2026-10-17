@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.77"
+  version: "1.78"
 ---
 
 # Configure a Ghosty Studio agent
@@ -118,7 +118,8 @@ legacy and always `true`.)
 | "connect it to this MCP server" | remote https server: `ghosty mcp connect <id> --name <n> --url <https-url> [--from-env VAR] --json` (with a token: the NAME of an env var; without one, if it returns `authorizeUrl` give that link to the user — gs adds the server when they authorize; `--no-open` on a remote box). Any other shape (stdio, several at once): `ghosty mcp get <id> --json > servers.json`, add the server, `ghosty mcp set <id> --file servers.json` (replaces; restarts by itself). One key per end user of another product: header `"Authorization": "Bearer ${turn.token}"` (http only, not ACP); each `message-stream` turn then needs `turnToken` |
 | "what does it have?" | `ghosty agents get <id> --json` → prompt, model, files, skills, mcp |
 | "does it work? / test it" | `ghosty try <id> "…" --json` → the agent's answer (see Verify) |
-| "talk to it / ask it something" | `ghosty chat <id> "…" --json` → streams `chunk` lines, ends with `done` |
+| "talk to it / ask it something" | `ghosty chat <id> "…" --json` → streams `chunk` lines, ends with `done`. A `permission` line (Lite/Goose) means the turn is STOPPED: ask the user, then `ghosty conversations permission <id> <conv> allow\|deny --id <permission-id>` |
+| "this chat is too long, start fresh", "use another model in this chat", "share this chat", "what are its subagents doing / stop one" | `ghosty conversations continue <id> <conv> --json` (→ new `id`; the agent gets the end of the old one) · `conversations model <id> <conv> <model-id>` · `conversations share <id> <conv> --json` (→ `url`, read-only, shows later messages too; `--off` closes it) · `conversations subagents <id> <conv> [stop <task-id>]` |
 | "test it as a WhatsApp customer / with a photo / with earlier context" | `ghosty try <id> "…" --waba --session <made-up phone> [--media FILE] [--history FILE --reset] --json` → `sent[]` (what it would send, tools included: `kind` text/voice/file/rich with `rich` ubicacion/cita/boton/contacto/reaccion; nothing leaves). A customer attachment exactly as Formmy delivers it: add `--as-formmy` → `media.copied` |
 | "show me this customer's chat on the board / did the attachment arrive?" | `ghosty cards ls <id> [--q name-or-phone] --json`, then `ghosty cards show <id> <folio\|phone> [--limit 50] --json` → `messages[]` with `role`, `content`, `mediaType`, `mediaCopied` |
 | "replay these real conversations" | `ghosty try <id> --replay sample.json --out ./replay [--max N]`; read `./replay/replay.json`; `--resume` if it was cut |
