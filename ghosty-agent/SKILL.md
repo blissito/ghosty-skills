@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.75"
+  version: "1.76"
 ---
 
 # Configure a Ghosty Studio agent
@@ -111,6 +111,7 @@ legacy and always `true`.)
 | "delete this agent" | offer `archive` first (reversible for 7 days); if they still want it gone, confirm, then `ghosty agents rm <id>` (owner only; `409` names the workspace where it is active) |
 | "switch it to another engine" | `ghosty agents set <id> --engine <engine> [--model <model-id>] --dry-run` first (says what is forgotten and which machine is replaced; `ok:false` if it is busy), then the same without `--dry-run`. The model belongs to the NEW engine; each conversation keeps its history (gs passes it on its first turn) |
 | "change the model" | `ghosty agents get <id> --json` (lists `models`), then `ghosty agents set <id> --model <model-id>` (restarts by itself) |
+| "let it search the web", "suggestions in its chat", "treat Teams as customers", "turn off its developer extension", "let it email anyone" | `ghosty agents set <id> --web-search on`, `--chat-starters "a\|b"` (its OWN chat; the web widget's are `agents embed --starters`), `--channel-roles teams=equipo\|cliente,programado=…` (personal WhatsApp: per group with `channels wa groups set --role`), `--extensions developer=off` (Lite/Goose box), `--email-any on\|off` (owner only) |
 | "make it think more / less" | Ghosty · Lite: `ghosty agents set <id> --env GHOSTY_THINKING_EFFORT=off\|low\|medium\|high\|max`. Codex: `--env FLEET_EFFORT=none\|minimal\|low\|medium\|high\|xhigh\|max` |
 | "give it these files / documents / knowledge" | `ghosty files put <id> <name> --file <local>`, one per file |
 | "install / teach it a skill" | `ghosty skills add <id> <slug> --file SKILL.md` (or just `<slug>` from the catalog: `ghosty skills ls <id>`), then `ghosty agents restart <id>` only if `needsRestart` |
