@@ -95,6 +95,14 @@ Raw image (`content-type: image/png|jpeg|webp`, ≤ 10 MB) or `{ "url": "https:/
 ## DELETE /
 Deletes the agent and its machines. Owner only (`403` for an editor or a `gat_` token); `409` if a workspace has it active (the message names it). `?fromWorkspace=1` turns it off in every Teams first, then deletes (owner or Ghosty staff). → `{ deleted: id, unbound?: [slug] }`.
 
+## GET|POST|DELETE /teams-schedule
+A turn at a set time in a Ghosty Teams room or thread: it answers there as if mentioned. `GET ?workspace=slug` → `{ scheduled: [...] }`; `POST { workspace, channel, parentId?, text, dueAt (ISO) }` → `{ id, channel, parentId, dueAt }`; `DELETE { workspace, id }` → `{ ok }`. The agent must be active in that workspace's Teams and the caller a member; never with a `gat_` token (`403`). CLI: `ghosty schedule add|ls|rm <id> … --teams <ws>#<room>[/<thread>]`.
+
+## Your conversations (`/api/v2/me/agents/{id}/…`, owner session, not `gat_`)
+`GET /tasks` → `{ tasks: [{ id, kind: download|audio|video|captions, label, state: running|done|failed, startedAt, endedAt, elapsedMs, url?, error?, sessionId?, delivered, wakePending? }], running }`: background jobs from your personal chats, last 24 h (read-only; stop with `POST /conversations/{sid}/cancel`). CLI: `ghosty turns jobs <id>`.
+`GET /schedule` → pending scheduled turns and recent runs; schedule and cancel per conversation (`/conversations/{sid}/schedule[/{id}]`). CLI: `ghosty schedule`.
+`POST /conversations/{sid}/continue` → `{ id }` (new linked thread) · `POST …/model { value }` · `POST …/permission { id, optionId }` → `{ resuelto }` · `POST|DELETE …/share` → `{ compartida, slug }` (`/s/{slug}`) · `GET …/subagents` (SSE: `snapshot` first) · `POST …/subagents/{taskId}/stop`. CLI: `ghosty conversations continue|model|permission|share|subagents`.
+
 ## Workspace (not under /agents/{id})
 `GET /api/v2/engines` → valid engines and models. `GET /api/v2/workspaces/{slug}/usage?days=14` → turns, tokens and no-balance messages per agent/day (owner or staff). `GET|POST /api/v2/workspaces/{slug}/bags`, `PATCH|DELETE …/bags/{bag}` (writes: staff). `POST /api/v2/workspaces/{slug}/renew {until}` and `…/rename {to}` (staff; `dryRun: true` first).
 

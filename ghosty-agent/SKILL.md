@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.78"
+  version: "1.79"
 ---
 
 # Configure a Ghosty Studio agent
@@ -126,6 +126,7 @@ legacy and always `true`.)
 | "is it configured right? / why does it answer badly?" | `ghosty agents doctor <id> --json` → `info` (model, effort, native subagents, answers /c, box for staff) and `checks[]` with `level` (ok/warn/error) and a `fix` command each; exit 1 = something to fix |
 | "did it forget the conversation? / did it start from scratch?" | `ghosty turns ls <id> --session <conversation> --json` → each turn's `sdk.resumed` (false + `freshReason` orphan/stale/replaced = it lost its memory; `new` = first turn). Claude agents only |
 | "try my public demo as a visitor / does it remember after a box change?" | `ghosty demos try <slug> "…"` (same thread across runs; `--new` for a new visitor); memory across boxes: second message with `--recycle-between --agent <id>`. It counts against the demo's caps |
+| "what is it doing in the background? / is my video ready?" | `ghosty turns jobs <id> --json` → `tasks[]` (`kind` video/audio/captions/download, `state`, `url` when done, `delivered`); stop them with `turns cancel`. Something that repeats on a clock is `ghosty schedule add <id> "…" --every 12h --until …` |
 | "stop it / it keeps working in the background" | `ghosty turns cancel <id> <conversation-id> --json` → `detenido` + `background` (video jobs, subagents, wake-ups canceled: nothing more is delivered) |
 | "test it with this photo / PDF" | `ghosty try <id> "…" --media FILE` (repeatable) or `ghosty chat <id> "…" --media FILE`; as a WhatsApp customer add `--waba --session <phone>` |
 | "do X to all agents that…" (staff) | `ghosty agents ls --sponsor <email> \| --owner <email> [--engine E] --ids`, then `xargs -I{} ghosty agents set {} … --dry-run` first |
