@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.81"
+  version: "1.82"
 ---
 
 # Configure a Ghosty Studio agent
@@ -111,7 +111,7 @@ legacy and always `true`.)
 | "rotate / revoke the agent token", "the gat_ token leaked" | owner session only (a `gat_` token can't rotate itself): `ghosty agents token rotate <id> --yes` prints the new token ONCE on stdout — hand it to the user to store, never echo it into logs; `token revoke <id> --yes` closes the editor channel. On ACP engines it cuts the turn in flight |
 | "teach it a rule for everyone", "from now on don't offer X", "add / turn off a promo" | `ghosty agents memory ls <id> --json`; rule: `memory add <id> "…" [--scope wa]` (travels in every conversation, also with customers), `memory edit <id> <rule-id> "…"`, `memory rm <id> <id>`; promo: `memory add <id> --promo --title T --details D [--from YYYY-MM-DD] [--until YYYY-MM-DD]`, `memory enable|disable <id> <promo-id>`. Personal preferences of the user go in `me memories` instead |
 | "give / hand over this agent to someone", "move it to another workspace" | `ghosty agents transfer <id> --to EMAIL [--workspace THEIR-SLUG] --dry-run`, show the plan and warnings (missing provider key), confirm with the user, then without `--dry-run` + `--yes`. Between the user's own workspaces: `--workspace SLUG|none` (none = personal; `--force` only if they accept cutting a running turn). Owner session, never the `gat_` token |
-| "put my agent in Microsoft Teams" (MTeams; not Ghosty Teams) | the company creates a Single Tenant **Azure Bot** (F0) in its own Azure and adds the Teams channel; then `ghosty channels mteams connect <id> --app-id <guid> --tenant <guid> [--name N]` with the client secret in `GHOSTY_MTEAMS_SECRET` (Ghosty tests it with Microsoft); paste the returned messaging endpoint in the Azure Bot → Configuration; `ghosty channels mteams zip <id> <bot> --out F.zip` and the Teams admin uploads it in Manage apps. No app store. Docs: /docs/canales/microsoft-teams |
+| "put my agent in Microsoft Teams" (MTeams; not Ghosty Teams) | the company creates a Single Tenant **Azure Bot** (F0) in its own Azure and adds the Teams channel; then `ghosty channels mteams connect <id> --app-id <guid> --tenant <guid> [--name N]` with the client secret in `GHOSTY_MTEAMS_SECRET` (Ghosty tests it with Microsoft); paste the returned messaging endpoint in the Azure Bot → Configuration; `ghosty channels mteams zip <id> <bot> --out F.zip` and the Teams admin uploads it in Manage apps. No app store. The admin can try it first with Azure's “Test in Web Chat”. If it stays silent, `ghosty channels mteams ls <id>` shows the last problem (`lastError`: e.g. "el token no es para este bot" = endpoint pasted into another Azure Bot). Docs: /docs/canales/microsoft-teams |
 | "connect WhatsApp Business / Messenger" | it's Meta's sign-in in the browser: `ghosty channels whatsapp connect <id>` (or `messenger connect`) opens the agent's Channels page; `--json` gives the URL to pass to the user |
 | "pay / upgrade the plan / invoices / change the card" | `ghosty plan open [workspace]` opens the plan page (Stripe); without a workspace (or `personal`) the personal plan at /c/uso; `--json` gives the URL |
 | "delete this agent" | offer `archive` first (reversible for 7 days); if they still want it gone, confirm, then `ghosty agents rm <id>` (owner only; `409` names the workspace where it is active) |
