@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.82"
+  version: "1.83"
 ---
 
 # Configure a Ghosty Studio agent
@@ -208,6 +208,7 @@ legacy and always `true`.)
 | "why did this run take so long?", "what did run N cost?", "where did @build spend its time?" | `ghosty factory runs show <n> --timing --workspace <slug> --json` (each role's turns with minutes, model, USD; clock split working / waiting for a person / other; commands ≥ 60 s). Long commands without output usually mean a hung test or a missing service in the work box |
 | "why did run N fail / get stuck?", "what should we change so it doesn't happen again?" | `ghosty factory runs why <n> --workspace <slug> --json` (category — `approved_unmet_criterion` first when a plan criterion like "in the preview" was approved without evidence, see `acceptance[]` —, impact, critical step with evidence, typed actions: role_rules → `.ghosty/factory.md`, repo_setup, skill, prompt; `--refresh` redoes it). Stuck patterns per step are in `runs show <n> --timing` |
 | "how is the factory doing?", "cost per merged PR", "merge rate" | `ghosty factory runs stats --since 30d [--repo owner/repo] --workspace <slug> --json` |
+| "hand this to the factory", "let the factory build it", "delegate this PR", "send it to @plan" | `ghosty factory run "<goal, why, how we know it's done>" --repo owner/repo --wait --workspace <slug> --json` → it returns at `plan_review` with `next` (the commands). Show the user the plan (`runs show <n> --full`) and ask before `runs approve <n> --plan-version N --yes`; then `runs watch <n>` until `pr_review` and ask before `runs merge <n> --yes`. `runs changes <n> --note "…"` sends it back; `runs card <n>` brings the live card down. More in the `ghosty-factory` skill |
 | "list / show / rename a factory run", "who is @build?" | `ghosty factory runs ls --workspace <slug> [--room R]` (with time and cost), `ghosty factory runs show <n> --workspace <slug> [--full]`, `ghosty factory runs rename <n> "Title" --workspace <slug> --dry-run` then `--yes`; `ghosty agents ls --handle build [--workspace <slug>]` |
 | "clean up the board / archive test cards" | `ghosty cards archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
 | "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |
@@ -237,7 +238,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
-- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups enable`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`, `spaces members rm`, `cards reply`, `cards pending --reply`, `factory runs rename`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
+- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups enable`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`, `spaces members rm`, `cards reply`, `cards pending --reply`, `factory runs rename`, `factory runs approve|changes|merge`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
 
 ## Verify
 

@@ -1,11 +1,11 @@
 ---
 name: ghosty-factory
-description: Prepare and maintain a GitHub repo for the Ghosty Software Factory (@plan, @build, @check agents working from Ghosty Teams) — AGENTS.md, the docs/agents/ knowledge base, .ghosty/factory.md (which agent and model plays each role) and small, reviewable PRs. Use when the user mentions Ghosty Factory, Software Factory, @plan/@build/@check, .ghosty/factory.md, docs/agents or wants their repo "ready for agents".
+description: Prepare and maintain a GitHub repo for the Ghosty Software Factory (@plan, @build, @check agents working from Ghosty Teams) — AGENTS.md, the docs/agents/ knowledge base, .ghosty/factory.md (which agent and model plays each role) and small, reviewable PRs. Use when the user mentions Ghosty Factory, Software Factory, @plan/@build/@check, .ghosty/factory.md, docs/agents or wants their repo "ready for agents". Also use it to DELEGATE work from your terminal to the factory with `ghosty factory run` ("hand this to the factory", "let @build do it", "open a factory run").
 license: MIT
 compatibility: Any git repository hosted on GitHub. Network access to https://www.ghosty.studio for the docs.
 metadata:
   author: ghosty-studio
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Get a repo ready for the Ghosty Software Factory
@@ -91,6 +91,30 @@ Conventions of this repo that @plan, @build and @check must know:
 - **Small PRs.** The platform marks a PR high-risk when it passes ~400 lines or touches auth,
   migrations, dependencies, public API or `.github/`. Split big work.
 - **`CODEOWNERS`** covering `.github/`, so a person reviews CI changes.
+
+## 5. Delegate from your terminal
+
+You (Claude Code, Codex…) can hand work to the factory and keep going with the user. It runs in
+the repo's Teams room with the same plan, approvals and card as if the user typed it there.
+
+**Delegate** long, self-contained work with a clear "done": a feature behind a flag, a refactor
+with tests, a migration with a checklist, a bug with a reproduction. **Keep it** when it needs
+back-and-forth with the user, it's a few lines, or you're still figuring out what to build.
+
+1. Write the request like a ticket: the goal, why, how we'll know it's done (a check a person can
+   run), and the files or docs to read first. One request = one PR.
+2. `ghosty factory run "<request>" --repo owner/repo --wait --workspace <slug> --json`. It returns
+   at `plan_review` with `next` (the exact commands). If the repo is in several rooms, add `--room`.
+3. Show the user the plan (`ghosty factory runs show <n> --full`) and **ask before signing**:
+   `ghosty factory runs approve <n> --plan-version <N> --yes`. To send it back:
+   `ghosty factory runs changes <n> --note "…" --yes`.
+4. `ghosty factory runs watch <n> --json` until `pr_review` (or `escalated`: show the points and
+   let the user choose `approve` = another loop, or `changes` = replan).
+5. Show the PR and **ask before merging**: `ghosty factory runs merge <n> --yes`. If CI is still
+   running it queues and goes in when it passes.
+
+Exit code 1 from `--wait`/`watch` only means the timeout ran out; run `watch` again. The user can
+always follow along in the room; `ghosty factory runs card <n>` brings the live card down.
 
 ## Verify
 
