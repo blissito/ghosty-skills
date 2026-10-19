@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.83"
+  version: "1.84"
 ---
 
 # Configure a Ghosty Studio agent
@@ -208,6 +208,7 @@ legacy and always `true`.)
 | "why did this run take so long?", "what did run N cost?", "where did @build spend its time?" | `ghosty factory runs show <n> --timing --workspace <slug> --json` (each role's turns with minutes, model, USD; clock split working / waiting for a person / other; commands ≥ 60 s). Long commands without output usually mean a hung test or a missing service in the work box |
 | "why did run N fail / get stuck?", "what should we change so it doesn't happen again?" | `ghosty factory runs why <n> --workspace <slug> --json` (category — `approved_unmet_criterion` first when a plan criterion like "in the preview" was approved without evidence, see `acceptance[]` —, impact, critical step with evidence, typed actions: role_rules → `.ghosty/factory.md`, repo_setup, skill, prompt; `--refresh` redoes it). Stuck patterns per step are in `runs show <n> --timing` |
 | "how is the factory doing?", "cost per merged PR", "merge rate" | `ghosty factory runs stats --since 30d [--repo owner/repo] --workspace <slug> --json` |
+| "connect this repo to the factory", "create a factory room", "set up the factory for <repo>" | `ghosty factory rooms connect owner/repo --room <name> --create --workspace <slug> --json` (checks the GitHub App sees it; returns `readiness` = what's missing); `ghosty factory rooms ls --workspace <slug>`; `rooms disconnect … --yes` |
 | "hand this to the factory", "let the factory build it", "delegate this PR", "send it to @plan" | `ghosty factory run "<goal, why, how we know it's done>" --repo owner/repo --wait --workspace <slug> --json` → it returns at `plan_review` with `next` (the commands). Show the user the plan (`runs show <n> --full`) and ask before `runs approve <n> --plan-version N --yes`; then `runs watch <n>` until `pr_review` and ask before `runs merge <n> --yes`. `runs changes <n> --note "…"` sends it back; `runs card <n>` brings the live card down. More in the `ghosty-factory` skill |
 | "list / show / rename a factory run", "who is @build?" | `ghosty factory runs ls --workspace <slug> [--room R]` (with time and cost), `ghosty factory runs show <n> --workspace <slug> [--full]`, `ghosty factory runs rename <n> "Title" --workspace <slug> --dry-run` then `--yes`; `ghosty agents ls --handle build [--workspace <slug>]` |
 | "clean up the board / archive test cards" | `ghosty cards archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |

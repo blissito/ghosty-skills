@@ -5,7 +5,7 @@ license: MIT
 compatibility: Any git repository hosted on GitHub. Network access to https://www.ghosty.studio for the docs.
 metadata:
   author: ghosty-studio
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Get a repo ready for the Ghosty Software Factory
@@ -101,6 +101,10 @@ the repo's Teams room with the same plan, approvals and card as if the user type
 with tests, a migration with a checklist, a bug with a reproduction. **Keep it** when it needs
 back-and-forth with the user, it's a few lines, or you're still figuring out what to build.
 
+0. If no room has the repo yet (`ghosty factory rooms ls --workspace <slug>`), connect it:
+   `ghosty factory rooms connect owner/repo --room <name> --create --workspace <slug>`. If it says
+   the GitHub App doesn't see the repo, give the user the link it prints. It also reports what the
+   repo is missing to be "ready for agents" (sections 1–4 above fix most of it).
 1. Write the request like a ticket: the goal, why, how we'll know it's done (a check a person can
    run), and the files or docs to read first. One request = one PR.
 2. `ghosty factory run "<request>" --repo owner/repo --wait --workspace <slug> --json`. It returns
