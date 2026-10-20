@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.84"
+  version: "1.85"
 ---
 
 # Configure a Ghosty Studio agent
@@ -160,6 +160,7 @@ legacy and always `true`.)
 | "how much did this workspace use / which agent spends most / messages left without balance" | `ghosty usage --workspace <slug> --by agent,day --days 14 --json` → `rows`, `agents` (turns, failed, billable, noQuota); the unanswered ones: `ghosty turns ls --workspace <slug> --quota-hits --json` (owner or staff) |
 | "how much does this agent cost / API equivalent / spend of /c vs Messenger" | `ghosty usage --agent <id> --by model,day,canal --cost --json` → `rows` (day, model, canal, tokens, `usd` at provider list price) and `totalUsd`; its turns per channel: `ghosty turns ls <id> --canal anon --json` |
 | "who answers /c without an account / turn native subagents on for X" or "give this agent a bigger box" | staff only: `ghosty settings ls`, `ghosty settings set ANON_NATIVE_AGENT_ID <agent-id>` (`unset` = back to the default), `ghosty settings set NATIVE_SUBAGENT_AGENTS +<agent-id>`; box: `ghosty agents set <id> --box 4096:10` (MB:conversations, recycles its boxes) |
+| "did a Meta campaign pause? / why are no ad leads coming in?" | staff only: `ghosty ads watch` (accounts, active campaigns, token expiry, last ad lead per ads-only number) and `ghosty ads watch run --dry-run` (what it would alert now). Alerts reach staff by themselves every hour |
 | "give this agent its own token bag / make it one-time" | staff only: `ghosty bags ls <workspace>`, `ghosty bags create <workspace> "<bag>" --tokens 20M [--recurring off]`, `ghosty agents set <id> --bag "<bag>"`; change: `ghosty bags set <workspace> "<bag>" --tokens 30M` |
 | "renew / extend this workspace" or "rename its slug" | staff only: `ghosty spaces renew <workspace> --until YYYY-MM-DD --dry-run`, confirm, then `--yes`; `ghosty spaces rename <old> <new> --dry-run` first |
 | "make X the owner of this workspace / hand it over to the client" | staff only: `ghosty spaces transfer <workspace> --to <email> --keep-as admin --copy-keys --dry-run --json` → `keys.missing` (agents without a key stop answering) and `warnings`; confirm with the user, then without `--dry-run` plus `--yes`. Only the owner changes: agents, skills and history stay; documents, databases, boards and numbers its agents use move (`resources`); anything also used outside stays and shows in `warnings`. `--copy-keys` also copies the connectors (MercadoPago, Skydropx…) it lacks |
