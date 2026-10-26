@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.87"
+  version: "1.88"
 ---
 
 # Configure a Ghosty Studio agent
@@ -174,6 +174,7 @@ legacy and always `true`.)
 | "did the push reach them / did the announcement go out" | staff only: `ghosty push log --user <email> --since 2d` (announcements show as `novedad`); `ghosty novedades ls` shows delivered/rejected per announcement |
 | "my site is paused / will pause", "keep my page online", "pin my site", "reactivate my page" | `ghosty sites ls` (state: pinned, paused, pauses on…), then `ghosty sites pin <slug>` — «Sitios fijos»: $49 USD/yr or $5 USD/mo ($990 / $99 MXN), includes up to 3 sites; never pauses, no banner. With a free slot it pins at once; otherwise it prints a card-payment link to hand over as is; `needs_pack` = all slots used: ask, then `--add-pack`. `--interval month`, `--currency mxn`. `ghosty sites unpin <slug>` frees a slot; `ghosty sites pins [--cancel]` |
 | "put my domain on my app", "use reservas.midominio.com", "custom domain" | `ghosty sites domain add <slug> <domain>` prints the DNS record (CNAME to `<slug>.ghosty.page` for a subdomain, A to the printed IP for the root); hand it over in one line. After they add it: `ghosty sites domain verify <slug> <domain>` (DNS can take minutes to a couple of hours; Cloudflare proxy off). Verified = the app answers at `https://<domain>`, HTTPS issued on the first visit. Apps with a backend only. `ghosty sites domain ls <slug>`, `rm <slug> <domain>` |
+| "I have a coupon", "redeem HACK2026", "create a coupon for the event" (staff) | `ghosty coupons redeem <CODE>` (one per account; adds balance and may lend a plan until a date). Or the link `https://www.ghosty.studio/canjear?codigo=<CODE>`. Staff: `ghosty coupons create <CODE> --credit 50 [--plan pro --until ISO] [--max N]` is born a draft; `ghosty coupons set <CODE> --on` turns it on; `ghosty coupons ls` |
 | "sign in with Google in my app", "login with Google" | No Google console: the app copies `https://www.ghosty.studio/apps/auth/ghosty-login.mjs` (no deps), sends the button to `loginUrl({ returnTo, state })` and on the callback calls `verifyLogin(id_token)` → `{ sub, email, name, picture }`. `returnTo` must be `<slug>.ghosty.page` or a verified custom domain. Docs: /docs/apps |
 | "publish this demo / landing as a Ghosty site", "change its URL / slug" | staff only: `ghosty sites publish <file.html|folder> --title T [--slug S]` (house site on EasyBits: no owner, no expiry, no banner); update it with `--site <slug>` (without it a NEW site is created); `ghosty sites slug <slug> <new-slug>`; `ghosty sites ls --house`. Exit 1 with `slug_unsupported` = EasyBits does not accept a slug yet: say so, don't retry |
 | "turn this tool off for customers / in WhatsApp" | `ghosty agents get <id> --fields tools --json` → `tools.canales` (what really runs per channel), then `ghosty agents set <id> --tool wa:<tool>=off` (no channel = everywhere). Team tools (identity, notes, full board, the owner's personal accounts) never run for customers and `=on` can't open them; a whole connector per channel: agent page → Connectors |
