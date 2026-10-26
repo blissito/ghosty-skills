@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.85"
+  version: "1.86"
 ---
 
 # Configure a Ghosty Studio agent
@@ -153,6 +153,7 @@ legacy and always `true`.)
 | "is it running the new image? / it still behaves old" | `ghosty agents box <id> --check <path-the-new-image-brings> --json` → `stale`; if > 0, `ghosty agents box <id> --recycle`, one turn, check again (ACP: `agents restart`) |
 | "which PDF templates does it have?" | `ghosty skills templates <id> --json` → `templates[]` with `source` (`agente:<skill>` or `casa`); its own go in `<skill>/pdf-templates/<name>.html` |
 | "give it this database / what can it write" | `ghosty dbs ls <id>`, `ghosty dbs tables <id> <db>`, `ghosty dbs grant <id> <db> [--external-write t1,t2] [--external-rows t:col+col]` (tables it may write from WhatsApp/Messenger; tables where each customer sees only their own rows, matched by phone column — use it for any customers/orders table) |
+| "undo what the agent wrote / restore the database" | `ghosty dbs checkpoints <id> <db>` (a checkpoint is taken before the first write of each agent turn and before panel deletes), then `ghosty dbs restore <id> <db> <checkpoint-id>`; it takes another checkpoint first, so the restore can be undone too |
 | "are the catalog photos permanent? / photos stopped showing on WhatsApp" | `ghosty dbs tables <id> <db>` → per photo column permanent · external · empty; external ones: `ghosty dbs rehost <id> <db> --table T --column C` |
 | "here are the photos the customer sent" (a folder named by SKU) | `ghosty dbs photos put <id> <db> --table catalogo --key-column sku --dir <folder> --dry-run`, show which SKUs have no row, then without `--dry-run` |
 | "remove these env variables" | `ghosty agents set <id> --unset-env K1,K2` |
