@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.88"
+  version: "1.89"
 ---
 
 # Configure a Ghosty Studio agent
@@ -163,6 +163,7 @@ legacy and always `true`.)
 | "who answers /c without an account / turn native subagents on for X" or "give this agent a bigger box" | staff only: `ghosty settings ls`, `ghosty settings set ANON_NATIVE_AGENT_ID <agent-id>` (`unset` = back to the default), `ghosty settings set NATIVE_SUBAGENT_AGENTS +<agent-id>`; box: `ghosty agents set <id> --box 4096:10` (MB:conversations, recycles its boxes) |
 | "did a Meta campaign pause? / why are no ad leads coming in?" | staff only: `ghosty ads watch` (accounts, active campaigns, token expiry, last ad lead per ads-only number) and `ghosty ads watch run --dry-run` (what it would alert now). Alerts reach staff by themselves every hour |
 | "give this agent its own token bag / make it one-time" | staff only: `ghosty bags ls <workspace>`, `ghosty bags create <workspace> "<bag>" --tokens 20M [--recurring off]`, `ghosty agents set <id> --bag "<bag>"`; change: `ghosty bags set <workspace> "<bag>" --tokens 30M` |
+| "move this workspace to pro / give it a plan as a courtesy" | staff only: `ghosty spaces plan <workspace> trial|pro|empresarial [--courtesy] [--until YYYY-MM-DD] [--note "…"] --dry-run --json` → `before`/`after` (plan, modelCap, tokensUsed/tokensIncluded, hardCap, paidUntil) and `warnings`; confirm, then `--yes`. Never charges Stripe nor emails the customer |
 | "renew / extend this workspace" or "rename its slug" | staff only: `ghosty spaces renew <workspace> --until YYYY-MM-DD --dry-run`, confirm, then `--yes`; `ghosty spaces rename <old> <new> --dry-run` first |
 | "make X the owner of this workspace / hand it over to the client" | staff only: `ghosty spaces transfer <workspace> --to <email> --keep-as admin --copy-keys --dry-run --json` → `keys.missing` (agents without a key stop answering) and `warnings`; confirm with the user, then without `--dry-run` plus `--yes`. Only the owner changes: agents, skills and history stay; documents, databases, boards and numbers its agents use move (`resources`); anything also used outside stays and shows in `warnings`. `--copy-keys` also copies the connectors (MercadoPago, Skydropx…) it lacks |
 | "assign X (Ghosty staff) to this client" | staff only: `ghosty staff assign <staff-email> <client-email> --reason "…"` (`unassign` to remove, `staff ls`); the assigned person operates the client's agents, documents, databases and boards as themselves, without keys, billing or transfers |
