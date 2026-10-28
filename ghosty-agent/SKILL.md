@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.91"
+  version: "1.92"
 ---
 
 # Configure a Ghosty Studio agent
@@ -227,6 +227,7 @@ legacy and always `true`.)
 | "have it speak in this Teams room / thread at 9" | `ghosty schedule add <id> "…" --teams <workspace>#<room>[/<thread-message-id>] --at ISO \| --in 30m` → it answers there as if mentioned; `ghosty schedule ls\|rm <id> [sched-id] --teams <workspace>` |
 | "have it do X every day / at 9 / remind me" | `ghosty schedule add <id> "…" --at ISO \| --in 30m [--every 12h --until ISO] [--title T]`; each run notifies the user's phone, an answer of exactly `OK` stays silent. `ghosty schedule ls|rm <id>` |
 | "watch this page / tell me when it changes / track the competitor's prices" | `ghosty watch add <id> <url> [--every 24h] [--focus "heading or line"] [--instruction "what matters"] [--title T]` — the platform fetches it without a model turn and only opens a turn when it changed (never a `schedule --every` that checks a page: each tick is a paid turn). `ghosty watch check <id> <watch-id> --dry-run` shows the diff now without saving; `watch ls\|rm\|resume <id> [watch-id]`. Inside a chat the agent has `watch_add`/`watch_list`/`watch_remove` |
+| "how does the voice sound / say this in the voice notes' voice / does it have a Mexican accent" | `ghosty tts "text" [--voice em_santa\|em_alex\|ef_dora] [--out voz.wav]` then `afplay voz.wav` — the house voice (Kokoro, Mexican Spanish es-419, pronunciation lexicon: write brand names normally, never phonetically). Up to 400 characters |
 
 Read `references/api.md` for exact request/response shapes before calling.
 
