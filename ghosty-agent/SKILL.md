@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.92"
+  version: "1.93"
 ---
 
 # Configure a Ghosty Studio agent
@@ -192,6 +192,7 @@ legacy and always `true`.)
 | "answer in this WhatsApp group / make the group team or customer" | personal WhatsApp only: `ghosty channels wa groups ls <id> --json`, then confirm with the user and `ghosty channels wa groups enable <id> "<group>" --role equipo\|cliente --yes` (`--dry-run` first); a newly enabled group only answers when mentioned — `--wake all` to answer every message |
 | "move / migrate this WhatsApp number from EasyBits or Formmy" | Business: find its Integration id and who answers it today with `ghosty channels whatsapp integrations <id> --json`, then `ghosty channels whatsapp link <id> --integration <formmy-id> --answer on\|off --dry-run --json` → show `plan`; confirm with the user (on = answers real customers), then without `--dry-run` and `--yes`; back: `unlink`. Its recent cards/messages/orders: `ghosty channels whatsapp history <id> --integration <formmy-id> --days 7 --dry-run` (works before linking), then without `--dry-run` (`--yes`; re-running never duplicates; it retries by itself during a deploy). It reports conversations that arrive paused by Formmy: list them with `ghosty cards ls <id> --paused --limit 200` and tell the user the agent won't answer those until they're resumed. Personal: `ghosty channels wa import <id> --from easybits:<agent-id> --own-number yes\|no --dry-run` (needs `EASYBITS_API_KEY`; prints whether the origin session is alive — if not, pair again instead), or `--from-file F` (EasyBits JSON) or `--from-dir DIR` (Baileys multi-file folder) `--own-number yes\|no --dry-run` (the user turns off EasyBits WITHOUT logout first), then `wa status` |
 | "answer this WhatsApp number" | confirm with the user (real customers), then `ghosty channels whatsapp enable <id> <number> --yes`; `--dry-run` shows the plan |
+| "is my Facebook page answering?", "turn the Messenger page on/off" | `ghosty channels messenger status <id>` (who answers each page, last webhook, token health from Meta); to switch: confirm with the user (real customers), then `ghosty channels messenger on <id> <page> --yes` (`--take` if another agent has it; `--dry-run` first); `off` keeps logging to the board |
 | "save my ElevenLabs / MercadoPago key" | never put the key in a command: ask the user to run `ghosty credentials set <provider>` themselves (hidden prompt), or use `--from-env VAR` |
 | "remove this skill" | `ghosty skills rm <id> <slug> --yes` keeps a local copy and returns `restore`; `ghosty skills get <id> <slug> --out DIR` to back one up first (without `--out` it only lists) |
 | "how much have I used? / am I out of usage?" | `ghosty usage --json` → `plan.name`, `week.pct` / `month.pct` (0–1), `exhausted` |
@@ -247,7 +248,7 @@ Read `references/api.md` for exact request/response shapes before calling.
 - **Restart is not free**: it cuts a turn in progress. Batch changes, restart once at the end.
 - Files go to the agent's working directory; tell the user the agent can `ls` them. Max 10 MB each.
 - Never print the token back to the user or into logs.
-- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels wa groups enable`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`, `spaces members rm`, `cards reply`, `cards pending --reply`, `factory runs rename`, `factory runs approve|changes|merge`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
+- **Destructive commands need `--yes`** when you run them (no terminal): `agents rm`, `files rm`, `skills rm`, `credentials rm`, `board archive`, `dbs import` over existing rows, `channels whatsapp enable`, `channels messenger on`, `channels wa groups enable`, `channels whatsapp link|unlink|history`, `channels wa import`, `agents unshare`, `boards move-cards`, `spaces members rm`, `cards reply`, `cards pending --reply`, `factory runs rename`, `factory runs approve|changes|merge`. Confirm with the user BEFORE adding it; prefer `--dry-run` first where it exists.
 
 ## Verify
 
