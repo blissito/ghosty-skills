@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.99"
+  version: "1.100"
 ---
 
 # Configure a Ghosty Studio agent
@@ -216,7 +216,7 @@ legacy and always `true`.)
 | "who changed this?", "audit log", "what happened to this agent's channels?", "who logged in as whom" | `ghosty audit ls [--workspace slug] [--agent id] [--actor email] [--action agent\|channel\|card\|factory\|workspace] [--since 24h] --json` (staff see all; others only their workspaces/agents) |
 | "why did this run take so long?", "what did run N cost?", "where did @build spend its time?" | `ghosty factory runs show <n> --timing --workspace <slug> --json` (each role's turns with minutes, model, USD; clock split working / waiting for a person / other; commands ≥ 60 s). Long commands without output usually mean a hung test or a missing service in the work box |
 | "why did run N fail / get stuck?", "what should we change so it doesn't happen again?" | `ghosty factory runs why <n> --workspace <slug> --json` (category — `approved_unmet_criterion` first when a plan criterion like "in the preview" was approved without evidence, see `acceptance[]` —, impact, critical step with evidence, typed actions: role_rules → `.ghosty/factory.md`, repo_setup, skill, prompt; `--refresh` redoes it). Stuck patterns per step are in `runs show <n> --timing` |
-| "the run is escalated, what do I pick?", "a or b", "merge it as it is" | `ghosty factory runs choose <n> --workspace <slug>` lists the 2–3 paths @check left (a/b/c with their action); `ghosty factory runs choose <n> <letter> --yes` applies one and the choice reaches the next role word for word. `merge_as_is` merges with red CI that the PR did not cause (logged as `merge_override`): confirm with the user first |
+| "the run is escalated, what do I pick?", "a or b", "merge it as it is" | `ghosty factory runs choose <n> --workspace <slug>` lists the 2–3 paths @check left (a/b/c with their action); `ghosty factory runs choose <n> <letter> --yes` applies one and the choice reaches the next role word for word. `merge_as_is` merges with red CI that the PR did not cause (logged as `merge_override`): confirm with the user first. `fix_main` opens a separate run that fixes the main branch (it waits for the owner's signature); the escalated run then shows «Waiting for the main fix (#N)» and resumes on its own when that fix merges |
 | "how is the factory doing?", "cost per merged PR", "merge rate" | `ghosty factory runs stats --since 30d [--repo owner/repo] --workspace <slug> --json` |
 | "connect this repo to the factory", "create a factory room", "set up the factory for <repo>" | `ghosty factory rooms connect owner/repo --room <name> --create --workspace <slug> --json` (checks the GitHub App sees it; returns `readiness` = what's missing); `ghosty factory rooms ls --workspace <slug>`; `rooms disconnect … --yes` |
 | "hand this to the factory", "let the factory build it", "delegate this PR", "send it to @plan" | `ghosty factory run "<goal, why, how we know it's done>" --repo owner/repo --wait --workspace <slug> --json` → it returns at `plan_review` with `next` (the commands). Show the user the plan (`runs show <n> --full`) and ask before `runs approve <n> --plan-version N --yes`; then `runs watch <n>` until `pr_review` and ask before `runs merge <n> --yes`. `runs changes <n> --note "…"` sends it back; `runs card <n>` brings the live card down. More in the `ghosty-factory` skill |
