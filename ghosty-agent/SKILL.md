@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.94"
+  version: "1.95"
 ---
 
 # Configure a Ghosty Studio agent
@@ -142,6 +142,7 @@ legacy and always `true`.)
 | "which workspaces do I have / where is X's workspace" | `ghosty spaces ls [--user <email>] --json` (others: staff) |
 | "no claude model fits / raise the model cap" (422 «caps at 0.25×») | staff: `ghosty spaces set <workspace> --model-cap 4 --dry-run`, then `--yes` (1 = up to Sonnet, none = its plan's) |
 | "create a workspace" | `ghosty spaces create <slug> --dry-run`, then without `--dry-run` (yours, trial; same rules as the web: confirmed email, plan cap). `--combo` other than teams: staff |
+| "the agent should only answer new people on my number / don't let it answer my mom" | `ghosty channels whatsapp contacts <id> --integration <id>` (state: new-only, known contacts, muted) · `--new-only on` (skips people the owner already talks to: WhatsApp contacts + history + people the owner wrote first) · `--mute <phone>` / `--unmute <phone>` (agent never answers that number) · `--seed` (bring known contacts again). Numbers connected from Channels start not answering, with new-only on: turn the number on once the known contacts show up |
 | "bring only the ad leads from this number" | `ghosty channels whatsapp history <id> --integration <formmy-id> --dry-run --list --only-ads` → show which, then without `--dry-run` (`--yes`); new numbers: `channels whatsapp link … --ads-only on` |
 | "this agent answers two numbers, keep their boards separate" | `ghosty channels whatsapp link <id> --integration <formmy-id> --board "<board>" --dry-run` per number (`--board agent` = back to the agent's); `channels whatsapp ls <id>` shows each number's board |
 | "why did it fail? / it didn't answer" | `ghosty turns ls <id> --errors --since 24h --json` → failed turns with their `error`; a WhatsApp customer got NO turn at all: `ghosty turns ls <id> --skipped --since 24h --json` → `reason` (manual_mode, records_only, paused, reaction, channel_off, no_quota, own_number) |
