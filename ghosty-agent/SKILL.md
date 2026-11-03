@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.101"
+  version: "1.102"
 ---
 
 # Configure a Ghosty Studio agent
@@ -219,7 +219,7 @@ legacy and always `true`.)
 | "the run is escalated, what do I pick?", "a or b", "merge it as it is" | `ghosty factory runs choose <n> --workspace <slug>` lists the 2–3 paths @check left (a/b/c with their action); `ghosty factory runs choose <n> <letter> --yes` applies one and the choice reaches the next role word for word. `merge_as_is` merges with red CI that the PR did not cause (logged as `merge_override`): confirm with the user first. `fix_main` opens a separate run that fixes the main branch (it waits for the owner's signature); the escalated run then shows «Waiting for the main fix (#N)» and resumes on its own when that fix merges |
 | "how is the factory doing?", "cost per merged PR", "merge rate" | `ghosty factory runs stats --since 30d [--repo owner/repo] --workspace <slug> --json` |
 | "connect this repo to the factory", "create a factory room", "set up the factory for <repo>" | `ghosty factory rooms connect owner/repo --room <name> --create --workspace <slug> --json` (checks the GitHub App sees it; returns `readiness` = what's missing); `ghosty factory rooms ls --workspace <slug>`; `rooms disconnect … --yes` |
-| "hand this to the factory", "let the factory build it", "delegate this PR", "send it to @plan" | `ghosty factory run "<goal, why, how we know it's done>" --repo owner/repo --wait --workspace <slug> --json` → it returns at `plan_review` with `next` (the commands). Show the user the plan (`runs show <n> --full`) and ask before `runs approve <n> --plan-version N --yes`; then `runs watch <n>` until `pr_review` and ask before `runs merge <n> --yes`. `runs changes <n> --note "…"` sends it back; `runs card <n>` brings the live card down. More in the `ghosty-factory` skill |
+| "hand this to the factory", "let the factory build it", "delegate this PR", "send it to @plan" | `ghosty factory run "<goal, why, how we know it's done>" --repo owner/repo --wait --workspace <slug> --json` → it returns at `plan_review` with `next` (the commands). Show the user the plan (`runs show <n> --full`) and ask before `runs approve <n> --plan-version N --yes`; then `runs watch <n>` until `pr_review` and ask before `runs merge <n> --yes`. `runs changes <n> --note "…"` sends it back; `runs card <n>` brings the live card down. A run that stopped moving: ask, then `runs resume <n> --yes` (`runs stop|cancel <n>` too). More in the `ghosty-factory` skill |
 | "list / show / rename a factory run", "who is @build?" | `ghosty factory runs ls --workspace <slug> [--room R]` (with time and cost), `ghosty factory runs show <n> --workspace <slug> [--full]`, `ghosty factory runs rename <n> "Title" --workspace <slug> --dry-run` then `--yes`; `ghosty agents ls --handle build [--workspace <slug>]` |
 | "clean up the board / archive test cards" | `ghosty cards archive <id> --integration X \| --column X \| --before 30d --dry-run` first, then with `--yes` after the user confirms (reversible) |
 | "which conversations does it have?" | `ghosty conversations ls <id> --json`; read one with `ghosty conversations show <id> <conv-id> --json` (`messages[]` with `role`, `text`); continue one with `ghosty chat <id> "…" --conversation <conv-id>` |

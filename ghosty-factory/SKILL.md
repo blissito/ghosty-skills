@@ -5,7 +5,7 @@ license: MIT
 compatibility: Any git repository hosted on GitHub. Network access to https://www.ghosty.studio for the docs.
 metadata:
   author: ghosty-studio
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Get a repo ready for the Ghosty Software Factory
@@ -116,6 +116,10 @@ back-and-forth with the user, it's a few lines, or you're still figuring out wha
    let the user choose `approve` = another loop, or `changes` = replan).
 5. Show the PR and **ask before merging**: `ghosty factory runs merge <n> --yes`. If CI is still
    running it queues and goes in when it passes.
+
+If a run stopped moving (nobody working, the card says «Not moving»), ask the user and then
+`ghosty factory runs resume <n> --yes`; `runs stop <n>` stops a running turn and `runs cancel <n>`
+closes the run.
 
 Exit code 1 from `--wait`/`watch` only means the timeout ran out; run `watch` again. The user can
 always follow along in the room; `ghosty factory runs card <n>` brings the live card down.
