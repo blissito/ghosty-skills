@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.105"
+  version: "1.106"
 ---
 
 # Configure a Ghosty Studio agent
@@ -112,7 +112,7 @@ legacy and always `true`.)
 | "teach it a rule for everyone", "from now on don't offer X", "add / turn off a promo" | `ghosty agents memory ls <id> --json`; rule: `memory add <id> "…" [--scope wa]` (travels in every conversation, also with customers), `memory edit <id> <rule-id> "…"`, `memory rm <id> <id>`; promo: `memory add <id> --promo --title T --details D [--from YYYY-MM-DD] [--until YYYY-MM-DD]`, `memory enable|disable <id> <promo-id>`. Personal preferences of the user go in `me memories` instead |
 | "give / hand over this agent to someone", "move it to another workspace" | `ghosty agents transfer <id> --to EMAIL [--workspace THEIR-SLUG] --dry-run`, show the plan and warnings (missing provider key), confirm with the user, then without `--dry-run` + `--yes`. Between the user's own workspaces: `--workspace SLUG|none` (none = personal; `--force` only if they accept cutting a running turn). Owner session, never the `gat_` token |
 | "put my agent in Microsoft Teams" (MTeams; not Ghosty Teams) | the company creates a Single Tenant **Azure Bot** (F0) in its own Azure and adds the Teams channel; then `ghosty channels mteams connect <id> --app-id <guid> --tenant <guid> [--name N]` with the client secret in `GHOSTY_MTEAMS_SECRET` (Ghosty tests it with Microsoft); paste the returned messaging endpoint in the Azure Bot → Configuration; `ghosty channels mteams zip <id> <bot> --out F.zip` and the Teams admin uploads it in Manage apps. No app store. The admin can try it first with Azure's “Test in Web Chat”. If it stays silent, `ghosty channels mteams ls <id>` shows the last problem (`lastError`: e.g. "el token no es para este bot" = endpoint pasted into another Azure Bot). Docs: /docs/canales/microsoft-teams |
-| "connect WhatsApp Business / Messenger" | it's Meta's sign-in in the browser: `ghosty channels whatsapp connect <id>` (or `messenger connect`) opens the agent's Channels page; `--json` gives the URL to pass to the user |
+| "connect WhatsApp Business / Messenger" | `ghosty channels whatsapp connect <id> --json` starts or resumes the connection and gives `url`: pass it to the user, it works for 1 h on any screen (if the phone doesn't finish Meta's sign-in, open it on a computer). Run it again to see `state`: `pending` or `connected`. It needs no balance and doesn't turn the agent on. Messenger: `messenger connect` opens Channels |
 | "pay / upgrade the plan / invoices / change the card" | `ghosty plan open [workspace]` opens the plan page (Stripe); without a workspace (or `personal`) the personal plan at /c/uso; `--json` gives the URL |
 | "delete this agent" | offer `archive` first (reversible for 7 days); if they still want it gone, confirm, then `ghosty agents rm <id>` (owner only; `409` names the workspace where it is active) |
 | "switch it to another engine" | `ghosty agents set <id> --engine <engine> [--model <model-id>] --dry-run` first (says what is forgotten and which machine is replaced; `ok:false` if it is busy), then the same without `--dry-run`. The model belongs to the NEW engine; each conversation keeps its history (gs passes it on its first turn) |
