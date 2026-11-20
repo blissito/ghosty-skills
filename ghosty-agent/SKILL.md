@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.112"
+  version: "1.113"
 ---
 
 # Configure a Ghosty Studio agent
@@ -139,7 +139,7 @@ legacy and always `true`.)
 | "clean up its history / delete the test chats" | `ghosty conversations rm <id> --kind test --before 7d --dry-run`, confirm, then without `--dry-run` (`--yes`); customer threads: `conversations archive <id> --kind channel` (never rm); only the user's own chats with it: `conversations rm <id> --kind personal --dry-run` (also gone from their apps) |
 | "merge my duplicated documents" | `ghosty agents docs dedupe --dry-run`, show the merges, then `--yes`; two specific ones: `ghosty agents docs dedupe <keep-id> <drop-id>` |
 | "use this file from my files in the chat" | `ghosty me files ls --q <name> --json` → id, then `ghosty chat <id> "…" --file <file-id>` |
-| "why isn't the bot answering this card / what is the board's fixed hour" | `ghosty boards pauses <workspace> [board] --json`: bot on, paused until, only operator, phone echo; resume a card with `ghosty cards resume <agent-id> <card>` |
+| "why isn't the bot answering this card / what is the board's fixed hour" | `ghosty boards pauses <workspace> [board] --json`: bot on, paused until, only operator, phone echo; pause a card with `ghosty cards pause <agent-id> <card> --for 90m | --until 17:30 | --mode board_until|permanent`, resume with `cards resume`; set the hour with `ghosty boards set-hour <workspace> [board] 17:30|off` |
 | "how many times did the agent escalate to a person and why" | `ghosty boards escalations <workspace> [board] --since 7d --json` (logged since 2026-11-20) |
 | "did a customer wait for a box / who got no reply (plan box cap)" | `ghosty spaces waits <workspace> --since 7d --json` (`gave_up` = no reply); caps: `ghosty usage --boxes --workspace W` |
 | "the owner asked to remove their agency (partner)" | `ghosty spaces partners <workspace>` lists paused partners; `--restore <id>` (owner or staff) or `--confirm <id>` (staff only) |
