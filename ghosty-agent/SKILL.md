@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.111"
+  version: "1.112"
 ---
 
 # Configure a Ghosty Studio agent
@@ -140,6 +140,7 @@ legacy and always `true`.)
 | "merge my duplicated documents" | `ghosty agents docs dedupe --dry-run`, show the merges, then `--yes`; two specific ones: `ghosty agents docs dedupe <keep-id> <drop-id>` |
 | "use this file from my files in the chat" | `ghosty me files ls --q <name> --json` → id, then `ghosty chat <id> "…" --file <file-id>` |
 | "why isn't the bot answering this card / what is the board's fixed hour" | `ghosty boards pauses <workspace> [board] --json`: bot on, paused until, only operator, phone echo; resume a card with `ghosty cards resume <agent-id> <card>` |
+| "how many times did the agent escalate to a person and why" | `ghosty boards escalations <workspace> [board] --since 7d --json` (logged since 2026-11-20) |
 | "did a customer wait for a box / who got no reply (plan box cap)" | `ghosty spaces waits <workspace> --since 7d --json` (`gave_up` = no reply); caps: `ghosty usage --boxes --workspace W` |
 | "the owner asked to remove their agency (partner)" | `ghosty spaces partners <workspace>` lists paused partners; `--restore <id>` (owner or staff) or `--confirm <id>` (staff only) |
 | "which workspaces do I have / where is X's workspace" | `ghosty spaces ls [--user <email>] --json` (others: staff) |
