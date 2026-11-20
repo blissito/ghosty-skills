@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.113"
+  version: "1.114"
 ---
 
 # Configure a Ghosty Studio agent
@@ -143,6 +143,10 @@ legacy and always `true`.)
 | "how many times did the agent escalate to a person and why" | `ghosty boards escalations <workspace> [board] --since 7d --json` (logged since 2026-11-20) |
 | "did a customer wait for a box / who got no reply (plan box cap)" | `ghosty spaces waits <workspace> --since 7d --json` (`gave_up` = no reply); caps: `ghosty usage --boxes --workspace W` |
 | "the owner asked to remove their agency (partner)" | `ghosty spaces partners <workspace>` lists paused partners; `--restore <id>` (owner or staff) or `--confirm <id>` (staff only) |
+| "what does this workspace have / are seats, agents or boxes at the cap" | `ghosty spaces show <workspace> --json`; agents with signals: `ghosty agents ls --workspace W --health`; staff, boxes at cap: `ghosty usage --boxes --at-cap` |
+| "change someone's role / name / expiry, resend the invite, give campaigns" | `ghosty spaces members role|name|resend|until|marketer-add|marketer-rm <workspace> <email> [--role member|admin] [--name TEXT] [--until DATE|none]`; staff access: `members rm <workspace> <email> --support` |
+| "who owns this card / archive one card / hide a board view" | `ghosty cards assign <agent-id> <card> --to <email>|none`, `ghosty cards archive <agent-id> --card <card>`, `ghosty boards views <workspace> [board] --hide tabla` |
+| "which connectors does this agent really have" | `ghosty agents connectors <agent-id>` (granted vs connected vs no effect) |
 | "which workspaces do I have / where is X's workspace" | `ghosty spaces ls [--user <email>] --json` (others: staff) |
 | "no claude model fits / raise the model cap" (422 «caps at 0.25×») | staff: `ghosty spaces set <workspace> --model-cap 4 --dry-run`, then `--yes` (1 = up to Sonnet, none = its plan's) |
 | "create a workspace" | `ghosty spaces create <slug> --dry-run`, then without `--dry-run` (yours, trial; same rules as the web: confirmed email, plan cap). `--combo` other than teams: staff |
