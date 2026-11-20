@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.110"
+  version: "1.111"
 ---
 
 # Configure a Ghosty Studio agent
@@ -139,6 +139,9 @@ legacy and always `true`.)
 | "clean up its history / delete the test chats" | `ghosty conversations rm <id> --kind test --before 7d --dry-run`, confirm, then without `--dry-run` (`--yes`); customer threads: `conversations archive <id> --kind channel` (never rm); only the user's own chats with it: `conversations rm <id> --kind personal --dry-run` (also gone from their apps) |
 | "merge my duplicated documents" | `ghosty agents docs dedupe --dry-run`, show the merges, then `--yes`; two specific ones: `ghosty agents docs dedupe <keep-id> <drop-id>` |
 | "use this file from my files in the chat" | `ghosty me files ls --q <name> --json` → id, then `ghosty chat <id> "…" --file <file-id>` |
+| "why isn't the bot answering this card / what is the board's fixed hour" | `ghosty boards pauses <workspace> [board] --json`: bot on, paused until, only operator, phone echo; resume a card with `ghosty cards resume <agent-id> <card>` |
+| "did a customer wait for a box / who got no reply (plan box cap)" | `ghosty spaces waits <workspace> --since 7d --json` (`gave_up` = no reply); caps: `ghosty usage --boxes --workspace W` |
+| "the owner asked to remove their agency (partner)" | `ghosty spaces partners <workspace>` lists paused partners; `--restore <id>` (owner or staff) or `--confirm <id>` (staff only) |
 | "which workspaces do I have / where is X's workspace" | `ghosty spaces ls [--user <email>] --json` (others: staff) |
 | "no claude model fits / raise the model cap" (422 «caps at 0.25×») | staff: `ghosty spaces set <workspace> --model-cap 4 --dry-run`, then `--yes` (1 = up to Sonnet, none = its plan's) |
 | "create a workspace" | `ghosty spaces create <slug> --dry-run`, then without `--dry-run` (yours, trial; same rules as the web: confirmed email, plan cap). `--combo` other than teams: staff |
