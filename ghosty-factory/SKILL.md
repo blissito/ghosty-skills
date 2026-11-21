@@ -124,6 +124,18 @@ closes the run.
 Exit code 1 from `--wait`/`watch` only means the timeout ran out; run `watch` again. The user can
 always follow along in the room; `ghosty factory runs card <n>` brings the live card down.
 
+## 6. Without a room: send one task to the cloud
+
+For a single, well-scoped task you do not need a workspace or a room. Write it as a GitHub issue with checkable acceptance criteria and send it to a work box in your own account:
+
+```bash
+ghosty dev run --issue 12 --watch     # inside the clone; or: ghosty dev run OWNER/REPO --title … --goal … --criteria …
+ghosty dev watch <id>                 # one blocking call; returns when it needs you or closes
+ghosty dev merge <id>                 # only with green CI and a clean review of the same commit
+```
+
+It needs your GitHub connected to your Ghosty account, and it works on what is pushed to GitHub, not on your local uncommitted changes. Zero checks is not green, and review is capped at 3 rounds.
+
 ## Verify
 
 - Every command in `AGENTS.md` runs.
