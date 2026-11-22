@@ -5,7 +5,7 @@ license: MIT
 compatibility: Needs Node 22+ (for npx @ghostystudio/cli) or curl, and network access to https://www.ghosty.studio
 metadata:
   author: ghosty-studio
-  version: "1.116"
+  version: "1.117"
 ---
 
 # Configure a Ghosty Studio agent
@@ -20,18 +20,22 @@ Always pass `--json` and read stdout as JSON; notices go to stderr.
 
 **Sign in (the user just opens a link):**
 
+Two steps that never block your terminal (same pattern as `fly auth login`). Ask before signing in:
+it changes this machine's configuration.
+
 ```bash
-npx -y @ghostystudio/cli login --json
-# first line: {"event":"login_url","url":"…"}  → show this link to the user and ask them to open it
-# then:       {"event":"logged_in","email":"…"} → done; the session is saved and renews itself
+npx -y @ghostystudio/cli login --no-wait --json
+# {"event":"already_logged_in","email":"…"}   → there's a session: carry on, nothing to do
+# {"event":"login_url","status":"pending","url":"…","code":"WDJB-MJHT","next":"ghosty login --wait"}
+#   → show the link to the user, tell them to check the code matches, and wait for them to approve
+npx -y @ghostystudio/cli login --wait --json
+# {"event":"logged_in","email":"…"}  → done; the session is saved and renews itself
+# exit 75 → still pending: run `login --wait` again (it waits up to 90 s each time)
 ```
 
-Run it in the background or with a long timeout: it waits (up to 5 min) for the user to sign in
-in their browser. Any command exiting with code **3** means "not signed in" → run `login` again.
-
-**Remote box, SSH or CI?** `login` switches by itself to a device code (`--device` forces it): the
-`login_url` line then carries `"code"` too; pass the link to the user and tell them to check the
-code matches before authorizing.
+Rules: show the link to the user and wait; never try to work around that step. Never print, log or
+put in a message an access token, refresh token or device code. Any command exiting with code **3**
+means "not signed in" → `login --no-wait` again. Full guide for agents: https://www.ghosty.studio/auth.md
 
 **Several accounts** (the user's and a customer's)? `--profile <name>` (or `GHOSTY_PROFILE`) keeps
 a separate saved session per name: `ghosty --profile cliente login --json`, then the same
